@@ -1,0 +1,12 @@
+.search-container {
+  display: flex;
+  height: 100%;
+  width: 400px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-button {
+  height: 2.5rem;
+}
