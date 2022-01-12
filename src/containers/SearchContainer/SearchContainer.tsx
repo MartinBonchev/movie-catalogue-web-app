@@ -11,9 +11,10 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
       <Button
         onClickHandler={() => {
           console.log("You are searching");
-          return "";
         }}
-      />
+      >
+        Search
+      </Button>
     </div>
   );
 };

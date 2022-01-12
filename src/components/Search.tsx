@@ -2,7 +2,7 @@ import { TextField } from "@mui/material";
 import React from "react";
 
 interface SearchProps {
-  styles?: object;
+  styles?: React.CSSProperties | undefined;
 }
 
 export const Search: React.FC<SearchProps> = ({ styles }) => {

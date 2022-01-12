@@ -1,11 +1,18 @@
 import { Button as MaterialButton } from "@mui/material";
 
 interface ButtonProps {
-  styles?: object;
-  onClickHandler: () => {};
+  styles?: React.CSSProperties | undefined;
+  onClickHandler: () => void | any;
+  children: string;
+  disabled?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ onClickHandler, styles }) => {
+export const Button: React.FC<ButtonProps> = ({
+  onClickHandler,
+  styles,
+  children,
+  disabled,
+}) => {
   return (
     <MaterialButton
       style={{ textTransform: "none", ...styles }}
@@ -14,9 +21,9 @@ const Button: React.FC<ButtonProps> = ({ onClickHandler, styles }) => {
       variant="outlined"
       color="success"
       onClick={onClickHandler}
+      disabled={disabled}
     >
-      Search
+      {children}
     </MaterialButton>
   );
 };
-export default Button;
