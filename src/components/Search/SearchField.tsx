@@ -3,9 +3,13 @@ import React from "react";
 
 interface SearchFieldProps {
   styles?: React.CSSProperties | undefined;
+  getValue: (value: string) => void;
 }
 
-export const SearchField: React.FC<SearchFieldProps> = ({ styles }) => {
+export const SearchField: React.FC<SearchFieldProps> = ({
+  styles,
+  getValue,
+}) => {
   const defaultStyles = { width: 300, backgroundColor: "white" };
 
   return (
@@ -16,6 +20,9 @@ export const SearchField: React.FC<SearchFieldProps> = ({ styles }) => {
       style={{ ...defaultStyles, ...styles }}
       label="Search by movie title..."
       variant="outlined"
+      onChange={(value) => {
+        getValue(value.target.value);
+      }}
     ></TextField>
   );
 };

@@ -2,12 +2,16 @@ import { Button, SearchField } from "components";
 import React from "react";
 import "./SearchContainer.css";
 
-interface SearchContainerProps {}
+interface SearchContainerProps {
+  getValue: (value: string) => void;
+}
 
-export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
+export const SearchContainer: React.FC<SearchContainerProps> = ({
+  getValue,
+}) => {
   return (
     <div className="search-container">
-      <SearchField />
+      <SearchField getValue={getValue} />
       <Button
         onClickHandler={() => {
           console.log("You are searching");

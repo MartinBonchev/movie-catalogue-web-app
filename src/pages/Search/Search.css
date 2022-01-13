@@ -3,16 +3,16 @@
   flex-direction: column;
   min-height: 100%;
   padding: 50px 50px;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 
 .search-heading-container {
   justify-content: space-between;
-  height: 10rem;
+
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 .movie {

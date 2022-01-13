@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   fetchFavouritesThunk,
   fetchMovies,
+  fetchReviewsThunk,
   MovieState,
   selectFavouritesList,
 } from "redux/slices/movieSlice";
@@ -20,13 +21,17 @@ export const Home: React.FC<HomeProps> = ({}) => {
     dispatch(fetchFavouritesThunk())
       .then((res: { payload: any }) => {
         setFavourites(res.payload);
-        console.log(res.payload);
       })
       .catch((error) => {
         console.log(error);
       });
     dispatch(fetchMovies())
       .then((res) => {})
+      .catch((error) => {
+        console.log(error);
+      });
+    dispatch(fetchReviewsThunk())
+      .then((res: any) => {})
       .catch((error) => {
         console.log(error);
       });
