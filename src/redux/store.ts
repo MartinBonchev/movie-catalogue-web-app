@@ -1,23 +1,19 @@
-import { createStore, applyMiddleware, combineReducers, compose } from "redux";
-import thunk from "redux-thunk";
-import { userReducer } from "./reducers/userReducer";
+import { configureStore } from "@reduxjs/toolkit";
+import authSlice from "./slices/authSlice";
+import movieSlice from "./slices/movieSlice";
 
-const rootReducer = combineReducers({
-  //   dashboard: userReducer,
-  //   appConfig: appReducer,
+export const store = configureStore({
+  reducer: {
+    userData: authSlice,
+    moviesData: movieSlice,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
-const middlewares = [thunk];
-
-// const devTools =
-//   process.env.NODE_ENV !== "production" && window.__REDUX__DEVTOOLS_EXTENSION__
-//     ? window.__REDUX_DEVTOOLS_EXTENSION__ &&
-//       window.__REDUX_DEVTOOLS_EXTENSION__()
-//     : (a) => a;
-
-const store = createStore(
-  rootReducer,
-  compose(applyMiddleware(...middlewares))
-);
-
-export default store;
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>;
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch;

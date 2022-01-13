@@ -1,0 +1,31 @@
+.section-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 50px 50px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-heading-container {
+  justify-content: space-between;
+  height: 10rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.movie {
+  margin: 20px 0;
+}
+.movie:hover {
+  cursor: pointer;
+  border: 2px solid blue;
+  border-radius: 1.5%;
+}
+h2 {
+  padding-bottom: 20px;
+}
+.container {
+  height: 100vh;
+}

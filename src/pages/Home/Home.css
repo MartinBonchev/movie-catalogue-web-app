@@ -1,0 +1,41 @@
+.heading-container {
+  background: url(https://hdwallpaperim.com/wp-content/uploads/2017/08/23/472571-film_reel-movies.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.favourite-section-container {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  color: white;
+}
+
+.inner-heading-container {
+  width: 500px;
+  padding: 100px;
+}
+
+.description {
+  font-size: 17px;
+  color: white;
+  display: block;
+  margin: 20px 0;
+  float: left;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}

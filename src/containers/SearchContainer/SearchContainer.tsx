@@ -1,4 +1,4 @@
-import { Button, Search } from "components";
+import { Button, SearchField } from "components";
 import React from "react";
 import "./SearchContainer.css";
 
@@ -7,7 +7,7 @@ interface SearchContainerProps {}
 export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   return (
     <div className="search-container">
-      <Search />
+      <SearchField />
       <Button
         onClickHandler={() => {
           console.log("You are searching");

@@ -1,11 +1,11 @@
 import { TextField } from "@mui/material";
 import React from "react";
 
-interface SearchProps {
+interface SearchFieldProps {
   styles?: React.CSSProperties | undefined;
 }
 
-export const Search: React.FC<SearchProps> = ({ styles }) => {
+export const SearchField: React.FC<SearchFieldProps> = ({ styles }) => {
   const defaultStyles = { width: 300, backgroundColor: "white" };
 
   return (

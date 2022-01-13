@@ -9,7 +9,7 @@ interface ContainerProps {
 export const Container: React.FC<ContainerProps> = ({ style, children }) => {
   const containerStyles: React.CSSProperties = {
     width: 500,
-    height: 600,
+    height: 700,
     backgroundColor: "white",
     border: "solid",
     borderWidth: 2,

@@ -1,5 +1,6 @@
-import { Button } from "./Button";
-import { Container } from "./Container";
-import { Search } from "./Search";
+import { Button } from "./Button/Button";
+import { Container } from "./Container/Container";
+import { Movie } from "./Movie/Movie";
+import { SearchField } from "./Search/SearchField";
 
-export { Search, Button, Container };
+export { SearchField, Button, Container, Movie };
