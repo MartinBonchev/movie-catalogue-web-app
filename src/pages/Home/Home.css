@@ -39,3 +39,20 @@
   display: flex;
   flex-direction: column;
 }
+
+.favourite-movie-container {
+  padding: 20px;
+  width: 200px;
+}
+
+.favourites-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.favourite-movie-container:hover {
+  cursor: pointer;
+  border: 2px solid blue;
+  border-radius: 1.5%;
+}

@@ -4,7 +4,7 @@ import { Button, Container } from "components";
 import React, { useState } from "react";
 import { useAppDispatch } from "__hooks__/redux";
 import { createUserThunk, loginUserThunk } from "../../redux/slices/authSlice";
-import {} from "firebase/auth";
+import { auth } from "firebase.config";
 interface AuthProps {}
 
 interface FieldData {
@@ -24,6 +24,8 @@ interface FormValidator {
   password: (value: string) => boolean;
   passwordCheck: (value: string) => boolean;
 }
+
+type FormKeys = "email" | "password" | "passwordCheck";
 
 const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
@@ -48,8 +50,6 @@ export const Auth: React.FC<AuthProps> = ({}) => {
     password: checkPassword,
     passwordCheck: checkPasswordCheck,
   };
-
-  type FormKeys = "email" | "password" | "passwordCheck";
 
   const checkFieldsValidity = (data: any) => {
     const keyValuePairs: [any, any][] = Object.entries(data);
@@ -142,7 +142,7 @@ export const Auth: React.FC<AuthProps> = ({}) => {
     setMode((prevState) => (prevState === "register" ? "login" : "register"));
   }
 
-  function auth(userData: FieldData) {
+  function authenticate(userData: FieldData) {
     if (isRegisterMode()) signup(userData);
     else signin(userData);
   }
@@ -196,7 +196,7 @@ export const Auth: React.FC<AuthProps> = ({}) => {
         <Button
           onClickHandler={() => {
             checkFieldsValidity(userData);
-            auth(userData);
+            authenticate(userData);
           }}
           // disabled={!isEmptyForm(userData)}
         >

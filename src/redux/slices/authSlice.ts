@@ -3,10 +3,9 @@ import {
   createAsyncThunk,
   createSelector,
 } from "@reduxjs/toolkit";
-import { auth } from "../../firebase";
+import { auth } from "../../firebase.config";
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   signInWithCustomToken,
   signInWithEmailAndPassword,
   signOut,
@@ -59,14 +58,14 @@ export const logoutUserThunk = createAsyncThunk("user/logout", async () => {
   return response;
 });
 
-export const loginWithTokenThunk = createAsyncThunk(
-  "user/verifyToken",
-  async () => {
-    const token: string = localStorage.getItem("accessToken") || "";
-    const response = await signInWithCustomToken(auth, token);
-    return response;
-  }
-);
+// export const loginWithTokenThunk = createAsyncThunk(
+//   "user/verifyToken",
+//   async () => {
+//     const token: string = localStorage.getItem("accessToken") || "";
+//     const response = await signInWithCustomToken(auth, token);
+//     return response;
+//   }
+// );
 
 const authSlice = createSlice({
   name: "auth",
@@ -74,7 +73,7 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createUserThunk.fulfilled, (state, action) => {
+      .addCase(createUserThunk.fulfilled, (state, action: any) => {
         state.user = {
           accessToken: action.payload.user.uid,
           email: action.payload.user.email,
@@ -85,7 +84,7 @@ const authSlice = createSlice({
         return initialState;
       });
     builder
-      .addCase(loginUserThunk.fulfilled, (state, action) => {
+      .addCase(loginUserThunk.fulfilled, (state, action: any) => {
         state.user = {
           accessToken: action.payload.user.uid,
           email: action.payload.user.email,
@@ -99,20 +98,21 @@ const authSlice = createSlice({
       .addCase(logoutUserThunk.fulfilled, () => {
         return initialState;
       })
-      .addCase(logoutUserThunk.rejected, (state, action) => {
+      .addCase(logoutUserThunk.rejected, (state) => {
         return state;
       });
-    builder
-      .addCase(loginWithTokenThunk.fulfilled, (state, action) => {
-        state.user = {
-          accessToken: action.payload.user.uid,
-          email: action.payload.user.email,
-        };
-        state.isAuthenticated = true;
-      })
-      .addCase(loginWithTokenThunk.rejected, () => {
-        return initialState;
-      });
+    // builder
+    //   .addCase(loginWithTokenThunk.fulfilled, (state, action: any) => {
+
+    //     state.user = {
+    //       accessToken: action.payload.user.uid,
+    //       email: action.payload.user.email,
+    //     };
+    //     state.isAuthenticated = true;
+    //   })
+    //   .addCase(loginWithTokenThunk.rejected, () => {
+    //     return initialState;
+    //   });
   },
 });
 

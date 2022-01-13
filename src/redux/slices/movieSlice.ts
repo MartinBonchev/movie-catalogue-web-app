@@ -3,17 +3,16 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { AsyncLocalStorage } from "async_hooks";
 import axios from "axios";
-import { Movie } from "components";
-import { SSL_OP_LEGACY_SERVER_CONNECT } from "constants";
-import { Params } from "react-router";
+import { database } from "../../firebase.config";
+import { collection, getDocs } from "firebase/firestore";
 
 const MOVIE_API_KEY = "9ba406ea4c973d65f9dedc0fea8f449f";
 const BASE_URL = "https://api.themoviedb.org/3/trending/movie/";
 
 interface MoviesListState {
   movies: {};
+  favourites: {};
 }
 
 export interface MovieState {
@@ -47,6 +46,7 @@ interface GenreState {
 
 const initialState: MoviesListState = {
   movies: {},
+  favourites: {},
 };
 
 const getGenres = (genresArr: Array<GenreState>): Array<string> => {
@@ -84,6 +84,15 @@ export const fetchMovies = createAsyncThunk("movies", async () => {
   return moviesDetailsResponse;
 });
 
+export const fetchFavouritesThunk = createAsyncThunk(
+  "movies/favourites",
+  async () => {
+    const favouritesCollection = collection(database, "favourites");
+    const response = await getDocs(favouritesCollection);
+    return response.docs.map((doc) => ({ ...doc.data(), movie_id: doc.id }));
+  }
+);
+
 const fetchMoviesSlice = createSlice({
   name: "movies",
   initialState,
@@ -94,6 +103,13 @@ const fetchMoviesSlice = createSlice({
         state.movies = action.payload;
       })
       .addCase(fetchMovies.rejected, () => {
+        return initialState;
+      });
+    builder
+      .addCase(fetchFavouritesThunk.fulfilled, (state, action) => {
+        state.favourites = { list: action.payload };
+      })
+      .addCase(fetchFavouritesThunk.rejected, () => {
         return initialState;
       });
   },
@@ -107,9 +123,14 @@ export const selectMoviesList = createSelector([selectMovies], (state) => {
   return state.movies;
 });
 
+export const selectFavouritesList = createSelector([selectMovies], (state) => {
+  return state.favourites;
+});
+
 export const selectMovie = (id: any) => {
   return createSelector([selectMovies], (state) => {
     return state.movies.find((el: MovieState) => {
+      console.log(el.id, id);
       return el.id === Number(id);
     });
   });

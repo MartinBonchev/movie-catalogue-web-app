@@ -10,9 +10,6 @@ interface SearchProps {}
 export const Search: React.FC<SearchProps> = ({}) => {
   const movies = useAppSelector(selectMoviesList);
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log(movies, " movies");
-  }, []);
   function searchHandler() {}
 
   function navigateToDetails(id: number) {

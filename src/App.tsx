@@ -5,7 +5,7 @@ import { Home } from "pages/Home/Home";
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
-  loginWithTokenThunk,
+  // loginWithTokenThunk,
   selectIsAuthenticated,
 } from "redux/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
@@ -15,10 +15,10 @@ import { MovieDetails } from "pages/MovieDetails/MovieDetails";
 
 function App() {
   const isAuth = useAppSelector(selectIsAuthenticated);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(loginWithTokenThunk);
-  }, []);
+  // const dispatch = useAppDispatch();
+  // useEffect(() => {
+  //   dispatch(loginWithTokenThunk());
+  // }, []);
   return (
     <div>
       {isAuth ? <Header /> : null}

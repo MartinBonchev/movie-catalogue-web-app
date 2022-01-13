@@ -1,26 +1,43 @@
 import { Button } from "components";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchMovies } from "redux/slices/movieSlice";
-import { useAppDispatch } from "__hooks__/redux";
+import {
+  fetchFavouritesThunk,
+  fetchMovies,
+  MovieState,
+  selectFavouritesList,
+} from "redux/slices/movieSlice";
+import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Home.css";
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = ({}) => {
+  const [favoutites, setFavourites] = useState<Array<MovieState>>([]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
-    dispatch(fetchMovies())
-      .then((res) => {
-        console.log(res);
+    dispatch(fetchFavouritesThunk())
+      .then((res: { payload: any }) => {
+        setFavourites(res.payload);
+        console.log(res.payload);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
+      });
+    dispatch(fetchMovies())
+      .then((res) => {})
+      .catch((error) => {
+        console.log(error);
       });
   }, []);
 
   function clickHandler() {
     navigate("/search");
+  }
+
+  function viewFavouriteMovie(id: number) {
+    navigate(`/movie/movie-title/${id}`);
   }
 
   return (
@@ -43,7 +60,21 @@ export const Home: React.FC<HomeProps> = ({}) => {
       </div>
       <div className="favourite-section-container">
         <h1>Your Favourites</h1>
-        {/* Favourite Movies */}
+        <div className="favourites-container">
+          {favoutites.map((el: MovieState) => (
+            <div
+              onClick={() => viewFavouriteMovie(el.id)}
+              className="favourite-movie-container"
+              key={el.id}
+            >
+              <img
+                height={300}
+                width={200}
+                src={`https://image.tmdb.org/t/p/w500${el.poster_path}`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
