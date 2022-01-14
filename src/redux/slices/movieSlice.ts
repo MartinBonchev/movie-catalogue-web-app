@@ -13,107 +13,94 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
+import { RootState } from "redux/store";
+import { getGenres } from "utils/utils";
 
 const MOVIE_API_KEY = "9ba406ea4c973d65f9dedc0fea8f449f";
 const BASE_URL = "https://api.themoviedb.org/3/trending/movie/";
 
 interface MoviesListState {
-  movies: {};
-  favourites: {};
-  reviews: {};
+  trendingMovies: MovieState[];
+  favourites: FavouriteMovie[];
+  reviews: [];
 }
 
 export interface MovieState {
-  id: number;
+  id?: string;
   title: string;
   release_date: string;
   overview: string;
   poster_path: string;
-  genres: Array<string>;
+  genres: Array<number>;
   runtime: number;
   homepage: string;
   vote_average: number;
+  external_id: number;
 }
 
-interface FetchedMovieDetailsState {
-  id: number;
-  title: string;
-  release_date: string;
-  overview: string;
+export interface CreateFavouriteMovie {
+  external_id: number;
   poster_path: string;
-  genres: Array<GenreState>;
-  runtime: number;
-  homepage: string;
-  vote_average: number;
 }
-
-interface GenreState {
-  id: number;
-  name: string;
+export interface FavouriteMovie extends CreateFavouriteMovie {
+  id: string;
 }
-
-interface MovieComponentState extends Omit<MovieState, "vote_average"> {}
-
-interface FavouriteMoviesState extends MovieComponentState {
-  movie_id: string;
-}
-
 const initialState: MoviesListState = {
-  movies: {},
-  favourites: {},
-  reviews: {},
+  trendingMovies: [],
+  favourites: [],
+  reviews: [],
 };
 
 const favouritesCollection = collection(database, "favourites");
 const reviewsCollection = collection(database, "movie-review-info");
 
-const getGenres = (genresArr: Array<GenreState>): Array<string> => {
-  return genresArr.reduce((acc: Array<string>, curr: GenreState) => {
-    acc.push(curr.name);
-    return acc;
-  }, []);
-};
-
-export const fetchMovies = createAsyncThunk("movies", async () => {
-  const moviesListResponse: { data: { results: [] } } = await axios.get(
-    `https://api.themoviedb.org/3/trending/movie/day?api_key=${MOVIE_API_KEY}`
+export const fetchTrendingMovies = createAsyncThunk("movies", async () => {
+  const response: { data: { results: MovieState[] } } = await axios.get(
+    `https://api.themoviedb.org/3/trending/movies/day?api_key=${MOVIE_API_KEY}`
   );
-
-  let moviesDetailsResponse: MovieState[] = [];
-  for (let i = 0; i < moviesListResponse.data.results.length; i++) {
-    const fetchedMovie: { id: number } = moviesListResponse.data.results[i];
-    const data: { data: FetchedMovieDetailsState } = await axios.get(
-      `https://api.themoviedb.org/3/movie/${fetchedMovie.id}?api_key=9ba406ea4c973d65f9dedc0fea8f449f`
-    );
-    const movieDetails: FetchedMovieDetailsState = data.data;
-    moviesDetailsResponse.push({
-      id: movieDetails.id,
-      title: movieDetails.title,
-      release_date: movieDetails.release_date,
-      overview: movieDetails.overview,
-      poster_path: movieDetails.poster_path,
-      genres: getGenres(movieDetails.genres),
-      runtime: movieDetails.runtime,
-      homepage: movieDetails.homepage,
-      vote_average: movieDetails.vote_average,
-    });
-  }
-
-  return moviesDetailsResponse;
+  return response.data.results;
 });
 
 export const fetchFavouritesThunk = createAsyncThunk(
   "movies/favourites",
   async () => {
     const response = await getDocs(favouritesCollection);
-    return response.docs.map((doc) => ({ ...doc.data(), movie_id: doc.id }));
+    return response.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    })) as FavouriteMovie[];
+  }
+);
+
+export const getMovieByIdThunk = createAsyncThunk(
+  "movie/get-movie-by-id",
+  async (id: number) => {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${MOVIE_API_KEY}`
+    );
+    console.log(response);
+    const data = response.data;
+    const movie: MovieState = {
+      external_id: data.id,
+      title: data.title,
+      release_date: data.release_date,
+      overview: data.overview,
+      poster_path: data.poster_path,
+      genres: data.genres.map((el: { id: number }) => el.id),
+      runtime: data.runtime,
+      homepage: data.homepage,
+      vote_average: data.vote_average,
+    };
+    return movie;
   }
 );
 
 export const addToFavouritesThunk = createAsyncThunk(
   "movie/favourites/add",
-  async (movie: MovieComponentState) => {
-    await addDoc(favouritesCollection, { ...movie });
+  async (movie: CreateFavouriteMovie) => {
+    console.log(movie);
+    const { id } = await addDoc(favouritesCollection, { ...movie });
+    return { id, ...movie };
   }
 );
 
@@ -121,7 +108,9 @@ export const deleteToFavouritesThunk = createAsyncThunk(
   "movie/favourites/delete",
   async (movieId: string) => {
     const movieDoc = doc(database, "favourites", movieId);
+
     await deleteDoc(movieDoc);
+    return movieId;
   }
 );
 
@@ -133,16 +122,13 @@ export const fetchReviewsThunk = createAsyncThunk("movie/reviews", async () => {
 export const addRatingThunk = createAsyncThunk(
   "movie/reviews/add",
   async ({ review, currMovie }: any) => {
-    console.log("asjdbnaskjdbn");
     const currReview = currMovie.find((el: any) => el.id === review.id);
     if (currReview !== undefined) {
-      console.log({ ...review });
       await addDoc(reviewsCollection, { ...review });
     } else {
       const reviewDoc = doc(database, "movie-review-info", review.id);
       const newReview = (review.vote_average + currMovie.vote_average) / 2;
       const newFields = { vote_average: newReview };
-      console.log(newFields);
       await updateDoc(reviewDoc, newFields);
     }
   }
@@ -174,35 +160,49 @@ const fetchMoviesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMovies.fulfilled, (state, action) => {
-        state.movies = action.payload;
+      .addCase(fetchTrendingMovies.fulfilled, (state, action) => {
+        const getTrendingMovies = action.payload.map((el) => {
+          const isFavourite = state.favourites.find((e) => {
+            return e.external_id === el.external_id;
+          });
+          return isFavourite ? { ...el, id: isFavourite.id } : el;
+        });
+        state.trendingMovies = getTrendingMovies;
       })
-      .addCase(fetchMovies.rejected, (state) => {
-        return { ...state, movies: {} };
+      .addCase(fetchTrendingMovies.rejected, (state) => {
+        state.trendingMovies = [];
       });
     builder
       .addCase(fetchFavouritesThunk.fulfilled, (state, action) => {
-        state.favourites = { list: action.payload };
+        state.favourites = action.payload;
       })
       .addCase(fetchFavouritesThunk.rejected, (state) => {
-        return { ...state, favourites: {} };
+        state.favourites = [];
       });
+    builder.addCase(addToFavouritesThunk.fulfilled, (state, action) => {
+      state.favourites.push(action.payload);
+    });
+    builder.addCase(deleteToFavouritesThunk.fulfilled, (state, action) => {
+      state.favourites = state.favourites.filter(
+        (el) => el.id !== action.payload
+      );
+    });
     builder
       .addCase(fetchReviewsThunk.fulfilled, (state, action) => {
-        state.reviews = { list: action.payload };
+        // state.reviews = { list: action.payload };
       })
       .addCase(fetchReviewsThunk.rejected, (state) => {
-        return { ...state, reviews: {} };
+        state.reviews = [];
       });
   },
 });
 
-const selectMovies = (state: any) => {
+const selectMovies = (state: RootState) => {
   return state.moviesData;
 };
 
 export const selectMoviesList = createSelector([selectMovies], (state) => {
-  return state.movies;
+  return state.trendingMovies;
 });
 
 export const selectFavouritesList = createSelector([selectMovies], (state) => {
@@ -214,7 +214,7 @@ export const selectReviewsList = createSelector([selectMovies], (state) => {
 });
 
 export const selectReview = (id: number) => {
-  return createSelector([selectMovies], (state) => {
+  return createSelector([selectMovies], (state: any) => {
     const review = state.reviews.list.find((el: any) => {
       return Number(el.id) === Number(id);
     });
@@ -222,10 +222,16 @@ export const selectReview = (id: number) => {
   });
 };
 
-export const selectMovie = (id: any) => {
-  return createSelector([selectMovies], (state) => {
-    return state.movies.find((el: MovieState) => {
-      return Number(el.id) === Number(id);
+export const selectIsFavourite = (id: number) => {
+  return createSelector([selectMovies], (state: MoviesListState) => {
+    return state.favourites.find((el) => el.external_id === id);
+  });
+};
+
+export const selectMovie = (id: number) => {
+  return createSelector([selectMovies], (state: MoviesListState) => {
+    return state.trendingMovies.find((el: MovieState) => {
+      return Number(el.external_id) === Number(id);
     });
   });
 };

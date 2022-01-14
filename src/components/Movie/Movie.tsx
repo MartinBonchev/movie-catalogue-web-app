@@ -4,13 +4,26 @@ import { useNavigate } from "react-router-dom";
 import {
   addToFavouritesThunk,
   deleteToFavouritesThunk,
+  CreateFavouriteMovie,
   fetchReviewsThunk,
   MovieState,
   selectFavouritesList,
+  selectIsFavourite,
 } from "redux/slices/movieSlice";
+import { getGenres } from "utils/utils";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Movie.css";
-interface MovieProps extends Omit<MovieState, "vote_average"> {}
+interface MovieProps {
+  id?: string;
+  title: string;
+  genres: Array<number>;
+  runtime?: number;
+  overview: string;
+  homepage: string;
+  external_id: number;
+  poster_path: string;
+  release_date: string;
+}
 
 export const Movie: React.FC<MovieProps> = ({
   id,
@@ -19,6 +32,7 @@ export const Movie: React.FC<MovieProps> = ({
   runtime,
   overview,
   homepage,
+  external_id,
   poster_path,
   release_date,
 }) => {
@@ -27,23 +41,24 @@ export const Movie: React.FC<MovieProps> = ({
     const year = new Date(date).getFullYear();
     return year;
   };
+  const isFavourite = useAppSelector(selectIsFavourite(external_id));
   const dispatch = useAppDispatch();
-  const { list } = useAppSelector(selectFavouritesList);
+  const favourites = useAppSelector(selectFavouritesList);
 
   function checkFavourites(id: number) {
-    return list.find((el: MovieState) => {
-      return Number(el.id) === id;
+    return favourites.find((el: CreateFavouriteMovie) => {
+      return Number(el.external_id) === id;
     });
   }
 
-  function addToFavourites(movie: MovieProps) {
+  function addToFavourites(movie: CreateFavouriteMovie) {
     dispatch(addToFavouritesThunk(movie));
-    navigate("/");
+    return navigate("/");
   }
 
-  function removeFromFavourites(movie: MovieProps) {
-    const movieToDelete = checkFavourites(movie.id);
-    dispatch(deleteToFavouritesThunk(movieToDelete.movie_id));
+  function removeFromFavourites(id: string | undefined) {
+    if (!id) return;
+    dispatch(deleteToFavouritesThunk(id));
     navigate("/");
   }
 
@@ -59,22 +74,17 @@ export const Movie: React.FC<MovieProps> = ({
           {title} ({getYear(release_date)})
         </h1>
         <p>
-          {genres.join(", ")} | {runtime} minutes
+          {/* {getGenres(genres).join(", ")}{" "} */}
+          {runtime ? `| ${runtime}  minutes` : null}
         </p>
         <p>{overview}</p>
         <a href={homepage}>Visit official site</a>
-        {checkFavourites(id) === undefined ? (
+        {!isFavourite ? (
           <Button
             onClickHandler={() =>
               addToFavourites({
-                id,
-                title,
-                genres,
-                runtime,
-                overview,
-                homepage,
+                external_id: external_id,
                 poster_path,
-                release_date,
               })
             }
           >
@@ -83,18 +93,7 @@ export const Movie: React.FC<MovieProps> = ({
         ) : (
           <Button
             color="error"
-            onClickHandler={() =>
-              removeFromFavourites({
-                id,
-                title,
-                genres,
-                runtime,
-                overview,
-                homepage,
-                poster_path,
-                release_date,
-              })
-            }
+            onClickHandler={() => removeFromFavourites(isFavourite.id)}
           >
             Remove from favourites
           </Button>

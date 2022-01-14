@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchFavouritesThunk,
-  fetchMovies,
+  fetchTrendingMovies,
   fetchReviewsThunk,
   MovieState,
   selectFavouritesList,
@@ -13,28 +13,12 @@ import "./Home.css";
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = ({}) => {
-  const [favoutites, setFavourites] = useState<Array<MovieState>>([]);
+  const favourites = useAppSelector(selectFavouritesList);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchFavouritesThunk())
-      .then((res: { payload: any }) => {
-        setFavourites(res.payload);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    dispatch(fetchMovies())
-      .then((res) => {})
-      .catch((error) => {
-        console.log(error);
-      });
-    dispatch(fetchReviewsThunk())
-      .then((res: any) => {})
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(fetchFavouritesThunk());
   }, []);
 
   function clickHandler() {
@@ -66,11 +50,11 @@ export const Home: React.FC<HomeProps> = ({}) => {
       <div className="favourite-section-container">
         <h1>Your Favourites</h1>
         <div className="favourites-container">
-          {favoutites.map((el: MovieState) => (
+          {favourites.map((el) => (
             <div
-              onClick={() => viewFavouriteMovie(el.id)}
+              onClick={() => viewFavouriteMovie(el.external_id)}
               className="favourite-movie-container"
-              key={el.id}
+              key={el.external_id}
             >
               <img
                 height={300}
