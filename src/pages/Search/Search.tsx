@@ -1,16 +1,16 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 
-import {Page} from 'layout/Page/Page'
-import { useAppDispatch, useAppSelector } from "__hooks__/redux";
-import { Movie } from "components";
-import { SearchContainer } from "containers";
 import {
   fetchTrendingMoviesThunk,
   selectSearchResults,
   selectTrendingMovies,
 } from "redux/slices/movieSlice";
 
+import { SearchContainer } from "containers";
+import { Movie } from "components";
+import { Page } from "layout/Page/Page";
+import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Search.css";
 
 export const Search: React.FC = () => {
@@ -27,18 +27,19 @@ export const Search: React.FC = () => {
     dispatch(fetchTrendingMoviesThunk());
   }, []);
 
-  const moviesToRender = searchResults.length > 0 ? searchResults: trendingMovies;
+  const moviesToRender =
+    searchResults.length > 0 ? searchResults : trendingMovies;
 
   return (
     <Page>
       <div className="container">
-      <div className="section-container">
-        <div className="search-heading-container">
-          <h2>Search</h2>
-          <SearchContainer />
-        </div>
-        <div className="movie-section-container">
-          {moviesToRender.map((movie) => (
+        <div className="section-container">
+          <div className="search-heading-container">
+            <h2>Search</h2>
+            <SearchContainer />
+          </div>
+          <div className="movie-section-container">
+            {moviesToRender.map((movie) => (
               <div
                 key={`${movie.poster_path}${movie.release_date}${movie.homepage}`}
                 className="movie"
@@ -54,9 +55,9 @@ export const Search: React.FC = () => {
                 />
               </div>
             ))}
+          </div>
         </div>
       </div>
-    </div>
     </Page>
   );
 };

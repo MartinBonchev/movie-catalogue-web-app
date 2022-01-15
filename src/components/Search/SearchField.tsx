@@ -1,17 +1,13 @@
 import React from "react";
-import { TextField } from "@mui/material";
-interface SearchFieldProps {
-  styles?: React.CSSProperties | undefined;
-  onChangeHandler: (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => void;
-  value: string;
-}
+import { StandardTextFieldProps, TextField } from "@mui/material";
+
+interface SearchFieldProps extends StandardTextFieldProps {}
 
 export const SearchField: React.FC<SearchFieldProps> = ({
-  styles,
-  onChangeHandler,
+  style,
+  onChange,
   value,
+  ...rest
 }) => {
   const defaultStyles = { width: 300, backgroundColor: "white" };
   return (
@@ -19,11 +15,12 @@ export const SearchField: React.FC<SearchFieldProps> = ({
       color="success"
       fullWidth={false}
       size="small"
-      style={{ ...defaultStyles, ...styles }}
+      style={{ ...defaultStyles, ...style }}
       label="Search by movie title..."
       variant="outlined"
-      onChange={onChangeHandler}
+      onChange={onChange}
       value={value || ""}
+      {...rest}
     ></TextField>
   );
 };

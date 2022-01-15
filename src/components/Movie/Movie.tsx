@@ -1,18 +1,19 @@
-import { Button } from "components";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   addToFavouritesThunk,
   deleteToFavouritesThunk,
   CreateFavouriteMovie,
-  fetchReviewsThunk,
-  MovieResponse,
-  selectFavoriteMovies,
   selectIsFavourite,
 } from "redux/slices/movieSlice";
-import { getGenres } from "utils/utils";
+
+import { Button } from "components";
+import { getGenres } from "utils/genre.utils";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Movie.css";
+import { extractYearFrom } from "utils/date.utils";
+
 interface MovieProps {
   id?: string;
   title: string;
@@ -37,10 +38,7 @@ export const Movie: React.FC<MovieProps> = ({
   release_date,
 }) => {
   const navigate = useNavigate();
-  const getYear = (date: string) => {
-    const year = new Date(date).getFullYear();
-    return year;
-  };
+
   const isFavourite = useAppSelector(selectIsFavourite(external_id));
   const dispatch = useAppDispatch();
 
@@ -64,7 +62,7 @@ export const Movie: React.FC<MovieProps> = ({
       />
       <div className="description-section">
         <h1>
-          {title} {release_date ? `(${getYear(release_date)})` : null}
+          {title} {release_date ? `(${extractYearFrom(release_date)})` : null}
         </h1>
         <p>
           {getGenres(genres).join(", ")}
@@ -74,7 +72,7 @@ export const Movie: React.FC<MovieProps> = ({
         {homepage && <a href={homepage}>Visit official site</a>}
         {!isFavourite ? (
           <Button
-            onClickHandler={() =>
+            onClick={() =>
               addToFavourites({
                 external_id: external_id,
                 poster_path,
@@ -86,7 +84,7 @@ export const Movie: React.FC<MovieProps> = ({
         ) : (
           <Button
             color="error"
-            onClickHandler={() => removeFromFavourites(isFavourite.id)}
+            onClick={() => removeFromFavourites(isFavourite.id)}
           >
             Remove from favourites
           </Button>

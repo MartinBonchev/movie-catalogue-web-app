@@ -1,7 +1,7 @@
-import { Button, SearchField } from "components";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { searchMoviesByQueryThunk } from "redux/slices/movieSlice";
+import { Button, SearchField } from "components";
 import { useAppDispatch } from "__hooks__/redux";
 import "./SearchContainer.css";
 
@@ -15,7 +15,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
 
   function searchAction(value: string) {
     if (value) dispatch(searchMoviesByQueryThunk(value));
-    if (pathname === "/") navigate("/search");
+    navigate("/search");
     setQuery("");
   }
 
@@ -28,7 +28,7 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
 
   return (
     <div className="search-container">
-      <SearchField onChangeHandler={handlerOnChange} value={query} />
+      <SearchField onChange={handlerOnChange} value={query} />
       <Button onClickHandler={() => searchAction(query)}>Search</Button>
     </div>
   );

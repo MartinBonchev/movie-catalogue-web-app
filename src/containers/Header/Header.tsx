@@ -1,36 +1,24 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-
 import { Typography } from "@mui/material";
-import "./Header.css";
-import { Button } from "components";
-import {SearchContainer} from 'containers'
+
 import { useAppDispatch } from "__hooks__/redux";
 import { logoutUserThunk } from "redux/slices/authSlice";
+import { Button } from "components";
+import { SearchContainer } from "containers";
+import "./Header.css";
 
-
-interface HeaderProps {}
-
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+
   async function logout() {
-    try {
-      const res: any = await dispatch(logoutUserThunk());
-      if (!res.error) {
-        localStorage.clear();
-        navigate("/auth");
-      }
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    dispatch(logoutUserThunk());
   }
 
   return (
     <div className="header-container">
       <Typography>My Movie Collection</Typography>
       <SearchContainer />
-      <Button color="primary" onClickHandler={logout}>
+      <Button color="primary" onClick={logout}>
         Log out
       </Button>
     </div>

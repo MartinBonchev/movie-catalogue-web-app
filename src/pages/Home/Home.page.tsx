@@ -1,11 +1,11 @@
 import { Button } from "components";
-import { Page } from "layout/Page/Page";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchFavouritesThunk,
   selectFavoriteMovies,
 } from "redux/slices/movieSlice";
+import { Page } from "layout/Page/Page";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Home.css";
 interface HomeProps {}
@@ -19,11 +19,11 @@ export const Home: React.FC<HomeProps> = ({}) => {
     dispatch(fetchFavouritesThunk());
   }, []);
 
-  function clickHandler() {
+  function navigateToSearch() {
     navigate("/search");
   }
 
-  function viewFavouriteMovie(id: number) {
+  function navigateToMovieDetails(id: number) {
     navigate(`/movie/movie-title/${id}`);
   }
 
@@ -40,7 +40,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
             <Button
               variant="contained"
               color="primary"
-              onClickHandler={clickHandler}
+              onClick={navigateToSearch}
             >
               Search
             </Button>
@@ -49,16 +49,16 @@ export const Home: React.FC<HomeProps> = ({}) => {
         <div className="favourite-section-container">
           <h1>Your Favourites</h1>
           <div className="favourites-container">
-            {favourites.map((el) => (
+            {favourites.map(({ external_id, poster_path }) => (
               <div
-                onClick={() => viewFavouriteMovie(el.external_id)}
+                onClick={() => navigateToMovieDetails(external_id)}
                 className="favourite-movie-container"
-                key={el.external_id}
+                key={external_id}
               >
                 <img
                   height={300}
                   width={200}
-                  src={`https://image.tmdb.org/t/p/w500${el.poster_path}`}
+                  src={`https://image.tmdb.org/t/p/w500${poster_path}`}
                 />
               </div>
             ))}

@@ -1,41 +1,24 @@
-import { Button as MaterialButton } from "@mui/material";
+import React from "react";
+import {
+  Button as MaterialButton,
+  ButtonProps as MaterialButtonProps,
+} from "@mui/material";
 
-type Color =
-  | "inherit"
-  | "success"
-  | "primary"
-  | "secondary"
-  | "error"
-  | "info"
-  | "warning"
-  | undefined;
-
-interface ButtonProps {
-  styles?: React.CSSProperties | undefined;
-  onClickHandler: () => void | any;
-  children: string;
-  disabled?: boolean;
-  color?: Color;
-  variant?: "text" | "outlined" | "contained" | undefined;
-}
+interface ButtonProps extends MaterialButtonProps {}
 
 export const Button: React.FC<ButtonProps> = ({
-  onClickHandler,
-  styles,
+  onClick,
+  style,
   children,
-  disabled,
-  color,
-  variant,
+  ...rest
 }) => {
   return (
     <MaterialButton
-      style={{ textTransform: "none", ...styles }}
+      style={{ textTransform: "none", ...style }}
       className="search-button"
       size="medium"
-      variant={variant || "outlined"}
-      color={color || "success"}
-      onClick={onClickHandler}
-      disabled={disabled}
+      onClick={onClick}
+      {...rest}
     >
       {children}
     </MaterialButton>

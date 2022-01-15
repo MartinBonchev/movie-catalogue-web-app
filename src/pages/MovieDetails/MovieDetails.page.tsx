@@ -1,8 +1,7 @@
-import { Rating, TextareaAutosize } from "@mui/material";
-import { Button, Movie } from "components";
-import { Page } from "layout/Page/Page";
 import React, { useEffect, useState } from "react";
+import { Rating, TextareaAutosize } from "@mui/material";
 import { Params, useParams } from "react-router";
+
 import { selectUser } from "redux/slices/authSlice";
 import {
   addCommentThunk,
@@ -13,8 +12,10 @@ import {
   selectReviewsList,
 } from "redux/slices/movieSlice";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
+
+import { Button, Movie } from "components";
+import { Page } from "layout/Page/Page";
 import "./MovieDetails.css";
-interface MovieDetailsProps {}
 
 const textareaStyles = {
   height: 200,
@@ -25,7 +26,7 @@ const textareaStyles = {
   padding: 10,
 };
 
-export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
+export const MovieDetails: React.FC = () => {
   const params: Readonly<Params<string>> = useParams();
   const dispatch = useAppDispatch();
   const [movie, setMovie] = useState<MovieResponse | null>(null);
@@ -73,36 +74,36 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
   return (
     <Page>
       <div className="movie-details-container">
-      {movie && (
-        <Movie
-          external_id={movie.external_id}
-          id={movie.id}
-          title={movie.title}
-          genres={movie.genres}
-          poster_path={movie.poster_path}
-          runtime={movie.runtime}
-          release_date={movie.release_date}
-          overview={movie.overview}
-          homepage={movie.homepage}
-        />
-      )}
-      <div className="review-section">
-        <p className="review-heading">Your Review</p>
-        {/* <Rating
+        {movie && (
+          <Movie
+            external_id={movie.external_id}
+            id={movie.id}
+            title={movie.title}
+            genres={movie.genres}
+            poster_path={movie.poster_path}
+            runtime={movie.runtime}
+            release_date={movie.release_date}
+            overview={movie.overview}
+            homepage={movie.homepage}
+          />
+        )}
+        <div className="review-section">
+          <p className="review-heading">Your Review</p>
+          {/* <Rating
           value={getRating() / 2}
           onChange={(_, newValue: number | null) => {
             changeRating(newValue);
           }}
         /> */}
-        {/* <TextareaAutosize
+          {/* <TextareaAutosize
           style={{ ...textareaStyles }}
           placeholder="Your private notes and comments about the movie"
           onChange={(event) => {
             setComment(event.target.value);
           }}
         /> */}
-        {/* <Button onClickHandler={addComment}>Add Comment</Button> */}
-        {/* <div className="comment-section-container">
+          {/* <Button onClickHandler={addComment}>Add Comment</Button> */}
+          {/* <div className="comment-section-container">
           {reviewState && reviewState.coments.length > 0
             ? reviewState.coments
                 .slice()
@@ -114,8 +115,8 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
                 ))
             : null}
         </div> */}
+        </div>
       </div>
-    </div>
     </Page>
   );
 };

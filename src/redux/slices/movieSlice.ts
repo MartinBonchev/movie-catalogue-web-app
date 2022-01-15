@@ -1,9 +1,9 @@
+import axios from "axios";
 import {
   createAsyncThunk,
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import axios from "axios";
 import {
   addDoc,
   collection,
@@ -14,12 +14,13 @@ import {
 } from "firebase/firestore";
 import { RootState } from "redux/store";
 
-import { database } from "../../firebase.config";
-
-const MOVIE_API_KEY = "9ba406ea4c973d65f9dedc0fea8f449f";
+import { setFavouriteId } from "utils/movie.utils";
+import { BASE_URL, MOVIE_API_KEY } from "utils/CONSTANTS";
+import { database } from "config/firebase.config";
 
 const favouritesFirebaseCollection = collection(database, "favourites");
 const reviewsFirebaseCollection = collection(database, "movie-review-info");
+
 interface CommentState {
   email: string;
   comment: string;
@@ -55,19 +56,19 @@ export interface FavouriteMovie extends CreateFavouriteMovie {
 
 export const fetchTrendingMoviesThunk = createAsyncThunk("movies", async () => {
   const response = await axios.get(
-    `https://api.themoviedb.org/3/trending/movies/day?api_key=${MOVIE_API_KEY}`
+    `${BASE_URL}/trending/movies/day?api_key=${MOVIE_API_KEY}`
   );
 
   const trendingMovies: MovieResponse[] = response.data.results.map(
-    (r: any) => {
+    (result: any) => {
       const trendingMovie: MovieResponse = {
-        external_id: r.id,
-        genres: r.genre_ids,
-        overview: r.overview,
-        poster_path: r.poster_path,
-        release_date: r.release_date,
-        title: r.title || r.name,
-        vote_average: r.vote_average,
+        external_id: result.id,
+        genres: result.genre_ids,
+        overview: result.overview,
+        poster_path: result.poster_path,
+        release_date: result.release_date,
+        title: result.title || result.name,
+        vote_average: result.vote_average,
       };
 
       return trendingMovie;
@@ -92,7 +93,7 @@ export const getMovieByIdThunk = createAsyncThunk(
   "movie/get-movie-by-id",
   async (id: number) => {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=${MOVIE_API_KEY}`
+      `${BASE_URL}/movie/${id}?api_key=${MOVIE_API_KEY}`
     );
     const data = response.data;
     const movie: MovieResponse = {
@@ -101,7 +102,7 @@ export const getMovieByIdThunk = createAsyncThunk(
       release_date: data.release_date,
       overview: data.overview,
       poster_path: data.poster_path,
-      genres: data.genres.map((el: { id: number }) => el.id),
+      genres: data.genres.map((genre: { id: number }) => genre.id),
       runtime: data.runtime,
       homepage: data.homepage,
       vote_average: data.vote_average,
@@ -114,17 +115,17 @@ export const searchMoviesByQueryThunk = createAsyncThunk(
   "movies/by-query",
   async (query: string) => {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?query=${query}&api_key=${MOVIE_API_KEY}`
+      `${BASE_URL}/search/movie?query=${query}&api_key=${MOVIE_API_KEY}`
     );
-    const movies: MovieResponse[] = response.data.results.map((r: any) => {
+    const movies: MovieResponse[] = response.data.results.map((result: any) => {
       const movie: MovieResponse = {
-        external_id: r.id,
-        genres: r.genre_ids,
-        overview: r.overview,
-        poster_path: r.poster_path,
-        release_date: r.release_date,
-        title: r.title,
-        vote_average: r.vote_average,
+        external_id: result.id,
+        genres: result.genre_ids,
+        overview: result.overview,
+        poster_path: result.poster_path,
+        release_date: result.release_date,
+        title: result.title,
+        vote_average: result.vote_average,
       };
 
       return movie;
@@ -160,35 +161,35 @@ export const fetchReviewsThunk = createAsyncThunk("movie/reviews", async () => {
 export const addRatingThunk = createAsyncThunk(
   "movie/reviews/add",
   async ({ review, currMovie }: any) => {
-    const currReview = currMovie.find((el: any) => el.id === review.id);
-    if (currReview !== undefined) {
-      await addDoc(reviewsFirebaseCollection, { ...review });
-    } else {
-      const reviewDoc = doc(database, "movie-review-info", review.id);
-      const newReview = (review.vote_average + currMovie.vote_average) / 2;
-      const newFields = { vote_average: newReview };
-      await updateDoc(reviewDoc, newFields);
-    }
+    // const currReview = currMovie.find((el: any) => el.id === review.id);
+    // if (currReview !== undefined) {
+    //   await addDoc(reviewsFirebaseCollection, { ...review });
+    // } else {
+    //   const reviewDoc = doc(database, "movie-review-info", review.id);
+    //   const newReview = (review.vote_average + currMovie.vote_average) / 2;
+    //   const newFields = { vote_average: newReview };
+    //   await updateDoc(reviewDoc, newFields);
+    // }
   }
 );
 
 export const addCommentThunk = createAsyncThunk(
   "movie/reviews/add",
   async ({ review, currMovie }: any) => {
-    const currReview = currMovie.find((el: any) => el.id === review.id);
-    console.log(currReview);
-    if (currReview !== undefined) {
-      await addDoc(reviewsFirebaseCollection, { ...review });
-    } else {
-      const reviewDoc = doc(database, "movie-review-info", review.id);
-      const newFields = {
-        coment: {
-          email: review.email,
-          comment: review.comment,
-        },
-      };
-      await updateDoc(reviewDoc, newFields);
-    }
+    // const currReview = currMovie.find((el: any) => el.id === review.id);
+    // console.log(currReview);
+    // if (currReview !== undefined) {
+    //   await addDoc(reviewsFirebaseCollection, { ...review });
+    // } else {
+    //   const reviewDoc = doc(database, "movie-review-info", review.id);
+    //   const newFields = {
+    //     coment: {
+    //       email: review.email,
+    //       comment: review.comment,
+    //     },
+    //   };
+    //   await updateDoc(reviewDoc, newFields);
+    // }
   }
 );
 
@@ -212,45 +213,31 @@ const fetchMoviesSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTrendingMoviesThunk.fulfilled, (state, action) => {
-        const getTrendingMovies = action.payload.map((el) => {
-          const isFavorite = state.favourites.find((e) => {
-            return e.external_id === el.external_id;
-          });
-          return isFavorite ? { ...el, id: isFavorite.id } : el;
-        });
-
+      .addCase(fetchTrendingMoviesThunk.fulfilled, (state, { payload }) => {
+        const getTrendingMovies = setFavouriteId(state.favourites, payload);
         state.trendingMovies = getTrendingMovies;
       })
       .addCase(fetchTrendingMoviesThunk.rejected, (state) => {
         state.trendingMovies = [];
       })
-      .addCase(searchMoviesByQueryThunk.fulfilled, (state, action) => {
-        const searchedMovies = action.payload.map((el) => {
-          const isFavorite = state.favourites.find((e) => {
-            return e.external_id === el.external_id;
-          });
-          return isFavorite ? { ...el, id: isFavorite.id } : el;
-        });
-
+      .addCase(searchMoviesByQueryThunk.fulfilled, (state, { payload }) => {
+        const searchedMovies = setFavouriteId(state.favourites, payload);
         state.searchResults = searchedMovies;
       })
       .addCase(searchMoviesByQueryThunk.rejected, (state) => {
         state.searchResults = [];
       })
-      .addCase(fetchFavouritesThunk.fulfilled, (state, action) => {
-        state.favourites = action.payload;
+      .addCase(fetchFavouritesThunk.fulfilled, (state, { payload }) => {
+        state.favourites = payload;
       })
       .addCase(fetchFavouritesThunk.rejected, (state) => {
         state.favourites = [];
       })
-      .addCase(deleteToFavouritesThunk.fulfilled, (state, action) => {
-        state.favourites = state.favourites.filter(
-          (el) => el.id !== action.payload
-        );
+      .addCase(deleteToFavouritesThunk.fulfilled, (state, { payload }) => {
+        state.favourites = state.favourites.filter((el) => el.id !== payload);
       })
-      .addCase(fetchReviewsThunk.fulfilled, (state, action) => {
-        // state.reviews = action.payload;
+      .addCase(fetchReviewsThunk.fulfilled, (state, { payload }) => {
+        // state.reviews = payload;
       })
       .addCase(fetchReviewsThunk.rejected, (state) => {
         state.reviews = [];

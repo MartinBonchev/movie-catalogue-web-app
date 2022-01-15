@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Navigate } from "react-router";
 import { FormControl, Input, InputLabel, Typography } from "@mui/material";
 
 import { Button, Container } from "components";
@@ -10,7 +11,6 @@ import {
 } from "redux/slices/authSlice";
 
 import "./Auth.css";
-import { Navigate } from "react-router";
 
 interface AuthProps {}
 
@@ -80,7 +80,6 @@ export const Auth: React.FC<AuthProps> = ({}) => {
         const res: any = await dispatch(
           createUserThunk({ email: email, password: password })
         );
-        writeInLocalStorage(res);
         if (res.error) setError(res.error.message);
       } catch (error: any) {
         console.log(error.message);
@@ -99,16 +98,10 @@ export const Auth: React.FC<AuthProps> = ({}) => {
           loginUserThunk({ email: email, password: password })
         );
         if (res.error) setError(res.error.message);
-        writeInLocalStorage(res);
       } catch (error: any) {
         console.log(error.message);
       }
     }
-  }
-
-  function writeInLocalStorage(res: any) {
-    localStorage.setItem("email", res.payload.user.email);
-    localStorage.setItem("uid", res.payload.user.uid);
   }
 
   function isEmptyForm(data: FieldData) {
@@ -207,7 +200,7 @@ export const Auth: React.FC<AuthProps> = ({}) => {
           <></>
         )}
         <Button
-          onClickHandler={() => {
+          onClick={() => {
             checkFieldsValidity(userData);
             authenticate(userData);
           }}
@@ -215,7 +208,7 @@ export const Auth: React.FC<AuthProps> = ({}) => {
         >
           {isRegisterMode() ? "Register" : "Login"}
         </Button>
-        <Button color="primary" onClickHandler={changeMode}>
+        <Button color="primary" onClick={changeMode}>
           {isRegisterMode() ? "Login" : "Register"}
         </Button>
         <p>{error || ""}</p>

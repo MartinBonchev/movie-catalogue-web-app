@@ -4,14 +4,14 @@ import {
   createSelector,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { auth } from "../../firebase.config";
+import { RootState } from "redux/store";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 
-import { RootState } from "redux/store";
+import { auth } from "config/firebase.config";
 
 interface User {
   user_id: string | null;
@@ -69,10 +69,10 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createUserThunk.fulfilled, (state, action: any) => {
+      .addCase(createUserThunk.fulfilled, (state, { payload }) => {
         state.user = {
-          user_id: action.payload.user.uid,
-          email: action.payload.user.email,
+          user_id: payload.user.uid,
+          email: payload.user.email,
         };
         state.isAuthenticated = true;
       })
@@ -80,10 +80,10 @@ const authSlice = createSlice({
         return initialState;
       });
     builder
-      .addCase(loginUserThunk.fulfilled, (state, action: any) => {
+      .addCase(loginUserThunk.fulfilled, (state, { payload }) => {
         state.user = {
-          user_id: action.payload.user.uid,
-          email: action.payload.user.email,
+          user_id: payload.user.uid,
+          email: payload.user.email,
         };
         state.isAuthenticated = true;
       })
@@ -95,7 +95,7 @@ const authSlice = createSlice({
         return initialState;
       })
       .addCase(logoutUserThunk.rejected, (state) => {
-        return state;
+        return initialState;
       });
   },
 });

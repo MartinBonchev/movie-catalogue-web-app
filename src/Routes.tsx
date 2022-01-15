@@ -2,10 +2,10 @@ import React from "react";
 
 import { ProtectedRoute } from "layout/ProtectedRoute/ProtectedRoute";
 import { Route, Routes } from "react-router-dom";
-import { Auth } from "pages/Authentication/Auth";
-import { Home } from "pages/Home/Home";
+import { Auth } from "pages/Authentication/Auth.page";
+import { Home } from "pages/Home/Home.page";
 import { Search } from "pages/Search/Search";
-import { MovieDetails } from "pages/MovieDetails/MovieDetails";
+import { MovieDetails } from "pages/MovieDetails/MovieDetails.page";
 
 export const AppRoutes: React.FC = () => {
   return (
