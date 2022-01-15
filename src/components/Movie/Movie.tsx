@@ -13,6 +13,7 @@ import { getGenres } from "utils/genre.utils";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Movie.css";
 import { extractYearFrom } from "utils/date.utils";
+import { selectUser } from "redux/slices/authSlice";
 
 interface MovieProps {
   id?: string;
@@ -40,6 +41,7 @@ export const Movie: React.FC<MovieProps> = ({
   const navigate = useNavigate();
 
   const isFavourite = useAppSelector(selectIsFavourite(external_id));
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
 
   function addToFavourites(movie: CreateFavouriteMovie) {
@@ -79,6 +81,7 @@ export const Movie: React.FC<MovieProps> = ({
               addToFavourites({
                 external_id: external_id,
                 poster_path,
+                user_id: user?.user_id,
               })
             }
           >

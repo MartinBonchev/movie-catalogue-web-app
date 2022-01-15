@@ -8,15 +8,17 @@ import {
 import { Page } from "layout/Page/Page";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Home.css";
+import { selectUser } from "redux/slices/authSlice";
 interface HomeProps {}
 
 export const Home: React.FC<HomeProps> = ({}) => {
   const favourites = useAppSelector(selectFavoriteMovies);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
 
   useEffect(() => {
-    dispatch(fetchFavouritesThunk());
+    dispatch(fetchFavouritesThunk(user?.user_id));
   }, []);
 
   function navigateToSearch() {

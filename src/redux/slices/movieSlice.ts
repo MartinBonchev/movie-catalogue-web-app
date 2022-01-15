@@ -10,6 +10,8 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { RootState } from "redux/store";
 
@@ -18,7 +20,13 @@ import { BASE_URL, MOVIE_API_KEY } from "utils/CONSTANTS";
 import { database } from "config/firebase.config";
 
 const favouritesFirebaseCollection = collection(database, "favourites");
-const commentsFirebaseCollection = collection(database, "comments");
+
+const getUserFavouriteCollection = (user_id: string | null | undefined) => {
+  return query(
+    collection(database, "favourites"),
+    where("user_id", "==", user_id)
+  );
+};
 
 export interface MovieResponse {
   id?: string;
@@ -36,6 +44,7 @@ export interface MovieResponse {
 export interface CreateFavouriteMovie {
   external_id: number;
   poster_path: string;
+  user_id?: string | null | undefined;
 }
 
 export interface FavouriteMovie extends CreateFavouriteMovie {
@@ -68,8 +77,8 @@ export const fetchTrendingMoviesThunk = createAsyncThunk("movies", async () => {
 
 export const fetchFavouritesThunk = createAsyncThunk(
   "movies/favourites",
-  async () => {
-    const response = await getDocs(favouritesFirebaseCollection);
+  async (user_id: string | null | undefined) => {
+    const response = await getDocs(getUserFavouriteCollection(user_id));
     return response.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
@@ -180,7 +189,11 @@ const fetchMoviesSlice = createSlice({
         state.favourites = [];
       })
       .addCase(addToFavouritesThunk.fulfilled, (state, { payload }) => {
-        state.favourites.push(payload);
+        state.favourites.push({
+          poster_path: payload.poster_path,
+          external_id: payload.external_id,
+          id: payload.id,
+        });
       })
       .addCase(deleteToFavouritesThunk.fulfilled, (state, { payload }) => {
         state.favourites = state.favourites.filter(
