@@ -162,10 +162,14 @@ const initialState: MovieState = {
   favourites: [],
 };
 
-const fetchMoviesSlice = createSlice({
+const moviesSlice = createSlice({
   name: "movies",
   initialState,
-  reducers: {},
+  reducers: {
+    clearFavourites(state) {
+      state.favourites = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTrendingMoviesThunk.fulfilled, (state, { payload }) => {
@@ -202,6 +206,8 @@ const fetchMoviesSlice = createSlice({
       });
   },
 });
+
+export const { clearFavourites } = moviesSlice.actions;
 
 const selectMoviesState = (state: RootState) => {
   return state.moviesData;
@@ -242,4 +248,4 @@ export const selectMovie = (id: number) => {
   });
 };
 
-export default fetchMoviesSlice.reducer;
+export default moviesSlice.reducer;

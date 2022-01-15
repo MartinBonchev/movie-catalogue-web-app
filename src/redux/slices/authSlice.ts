@@ -4,7 +4,7 @@ import {
   createSelector,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { RootState } from "redux/store";
+import { RootState, store } from "redux/store";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -94,7 +94,7 @@ const authSlice = createSlice({
       .addCase(logoutUserThunk.fulfilled, () => {
         return initialState;
       })
-      .addCase(logoutUserThunk.rejected, (state) => {
+      .addCase(logoutUserThunk.rejected, () => {
         return initialState;
       });
   },

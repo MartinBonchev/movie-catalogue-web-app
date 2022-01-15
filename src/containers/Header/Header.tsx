@@ -6,12 +6,14 @@ import { logoutUserThunk } from "redux/slices/authSlice";
 import { Button } from "components";
 import { SearchContainer } from "containers";
 import "./Header.css";
+import { clearFavourites } from "redux/slices/movieSlice";
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
 
   async function logout() {
     dispatch(logoutUserThunk());
+    dispatch(clearFavourites());
   }
 
   return (
