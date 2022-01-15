@@ -3,19 +3,18 @@ import { Rating, TextareaAutosize } from "@mui/material";
 import { Params, useParams } from "react-router";
 
 import { selectUser } from "redux/slices/authSlice";
-import {
-  addCommentThunk,
-  addRatingThunk,
-  getMovieByIdThunk,
-  MovieResponse,
-  selectReview,
-  selectReviewsList,
-} from "redux/slices/movieSlice";
+import { getMovieByIdThunk, MovieResponse } from "redux/slices/movieSlice";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 
 import { Button, Movie } from "components";
 import { Page } from "layout/Page/Page";
 import "./MovieDetails.css";
+import {
+  addChangeReviewThunk,
+  fetchReviewsThunk,
+  selectReview,
+  selectReviewsList,
+} from "redux/slices/reviewSlice";
 
 const textareaStyles = {
   height: 200,
@@ -30,10 +29,10 @@ export const MovieDetails: React.FC = () => {
   const params: Readonly<Params<string>> = useParams();
   const dispatch = useAppDispatch();
   const [movie, setMovie] = useState<MovieResponse | null>(null);
-  // const reviewState = useAppSelector(selectReview(movie.id));
+  const movieReview = useAppSelector(selectReview(Number(params.id)));
+  const reviewList = useAppSelector(selectReviewsList);
   const user = useAppSelector(selectUser);
   // const reviews = useAppSelector(selectReviewsList);
-
   const [comment, setComment] = useState("");
   // const getRating = (): number => {
   //   if (reviewState !== undefined && reviewState.vote_average)
@@ -46,6 +45,7 @@ export const MovieDetails: React.FC = () => {
       const movie = await dispatch(getMovieByIdThunk(Number(params.id)));
       setMovie(movie.payload as MovieResponse);
     }
+    dispatch(fetchReviewsThunk());
     getMovieById();
   }, []);
 
@@ -61,15 +61,23 @@ export const MovieDetails: React.FC = () => {
   //   console.log({ review: { ...data, id: movie.id }, currMovie: movie });
   // };
 
-  // const changeRating = async (value: number | null) => {
-  //   if (value !== null)
-  //     await dispatch(
-  //       addRatingThunk({
-  //         review: { id: movie.id, vote_average: value * 2 },
-  //         currMovie: movie,
-  //       })
-  //     );
-  // };
+  const addChangeRating = async (vote_average: number | null) => {
+    if (vote_average === null) return;
+    const movieHasReview = !!reviewList.find(
+      ({ external_movie_id }) => external_movie_id === movie?.external_id
+    );
+
+    dispatch(
+      addChangeReviewThunk({
+        review: {
+          ...movieReview!,
+          external_movie_id: movie?.external_id!,
+          vote_average: (vote_average * 2 + movie?.vote_average!) / 2,
+        },
+        movieHasReview: movieHasReview,
+      })
+    );
+  };
 
   return (
     <Page>
@@ -89,20 +97,23 @@ export const MovieDetails: React.FC = () => {
         )}
         <div className="review-section">
           <p className="review-heading">Your Review</p>
-          {/* <Rating
-          value={getRating() / 2}
-          onChange={(_, newValue: number | null) => {
-            changeRating(newValue);
-          }}
-        /> */}
-          {/* <TextareaAutosize
-          style={{ ...textareaStyles }}
-          placeholder="Your private notes and comments about the movie"
-          onChange={(event) => {
-            setComment(event.target.value);
-          }}
-        /> */}
-          {/* <Button onClickHandler={addComment}>Add Comment</Button> */}
+          <Rating
+            value={
+              ((movieReview && movieReview.vote_average) ||
+                movie?.vote_average!) / 2
+            }
+            onChange={(_, newValue: number | null) => {
+              addChangeRating(newValue);
+            }}
+          />
+          <TextareaAutosize
+            style={{ ...textareaStyles }}
+            placeholder="Your private notes and comments about the movie"
+            onChange={(event) => {
+              setComment(event.target.value);
+            }}
+          />
+          {/* <Button onClick={addComment}>Add Comment</Button> */}
           {/* <div className="comment-section-container">
           {reviewState && reviewState.coments.length > 0
             ? reviewState.coments
@@ -113,8 +124,8 @@ export const MovieDetails: React.FC = () => {
                     <p>{el.comment}</p>
                   </div>
                 ))
-            : null}
-        </div> */}
+            : null} 
+         </div>  */}
         </div>
       </div>
     </Page>

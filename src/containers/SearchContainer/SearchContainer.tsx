@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { searchMoviesByQueryThunk } from "redux/slices/movieSlice";
 import { Button, SearchField } from "components";
 import { useAppDispatch } from "__hooks__/redux";
@@ -9,7 +9,6 @@ interface SearchContainerProps {}
 
 export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   const [query, setQuery] = useState("");
-  const { pathname } = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

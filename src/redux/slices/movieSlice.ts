@@ -10,7 +10,6 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  updateDoc,
 } from "firebase/firestore";
 import { RootState } from "redux/store";
 
@@ -19,17 +18,11 @@ import { BASE_URL, MOVIE_API_KEY } from "utils/CONSTANTS";
 import { database } from "config/firebase.config";
 
 const favouritesFirebaseCollection = collection(database, "favourites");
-const reviewsFirebaseCollection = collection(database, "movie-review-info");
+const commentsFirebaseCollection = collection(database, "comments");
 
 interface CommentState {
   email: string;
   comment: string;
-}
-
-interface ReviewState {
-  coments: CommentState[];
-  external_id: string;
-  vote_average: string;
 }
 
 export interface MovieResponse {
@@ -153,58 +146,53 @@ export const deleteToFavouritesThunk = createAsyncThunk(
   }
 );
 
-export const fetchReviewsThunk = createAsyncThunk("movie/reviews", async () => {
-  const response = await getDocs(reviewsFirebaseCollection);
-  return response.docs.map((doc) => ({ ...doc.data(), review_id: doc.id }));
-});
+// export const fetchCommentsThunk = createAsync
 
-export const addRatingThunk = createAsyncThunk(
-  "movie/reviews/add",
-  async ({ review, currMovie }: any) => {
-    // const currReview = currMovie.find((el: any) => el.id === review.id);
-    // if (currReview !== undefined) {
-    //   await addDoc(reviewsFirebaseCollection, { ...review });
-    // } else {
-    //   const reviewDoc = doc(database, "movie-review-info", review.id);
-    //   const newReview = (review.vote_average + currMovie.vote_average) / 2;
-    //   const newFields = { vote_average: newReview };
-    //   await updateDoc(reviewDoc, newFields);
-    // }
-  }
-);
+// export const addRatingThunk = createAsyncThunk(
+//   "movie/reviews/add",
+//   async ({ review, currMovie }: any) => {
+//     // const currReview = currMovie.find((el: any) => el.id === review.id);
+//     // if (currReview !== undefined) {
+//     //   await addDoc(reviewsFirebaseCollection, { ...review });
+//     // } else {
+//     //   const reviewDoc = doc(database, "movie-review-info", review.id);
+//     //   const newReview = (review.vote_average + currMovie.vote_average) / 2;
+//     //   const newFields = { vote_average: newReview };
+//     //   await updateDoc(reviewDoc, newFields);
+//     // }
+//   }
+// );
 
-export const addCommentThunk = createAsyncThunk(
-  "movie/reviews/add",
-  async ({ review, currMovie }: any) => {
-    // const currReview = currMovie.find((el: any) => el.id === review.id);
-    // console.log(currReview);
-    // if (currReview !== undefined) {
-    //   await addDoc(reviewsFirebaseCollection, { ...review });
-    // } else {
-    //   const reviewDoc = doc(database, "movie-review-info", review.id);
-    //   const newFields = {
-    //     coment: {
-    //       email: review.email,
-    //       comment: review.comment,
-    //     },
-    //   };
-    //   await updateDoc(reviewDoc, newFields);
-    // }
-  }
-);
+// export const addCommentThunk = createAsyncThunk(
+//   "movie/reviews/add",
+//   async ({ review, currMovie }: any) => {
+//     // const currReview = currMovie.find((el: any) => el.id === review.id);
+//     // console.log(currReview);
+//     // if (currReview !== undefined) {
+//     //   await addDoc(reviewsFirebaseCollection, { ...review });
+//     // } else {
+//     //   const reviewDoc = doc(database, "movie-review-info", review.id);
+//     //   const newFields = {
+//     //     coment: {
+//     //       email: review.email,
+//     //       comment: review.comment,
+//     //     },
+//     //   };
+//     //   await updateDoc(reviewDoc, newFields);
+//     // }
+//   }
+// );
 
 interface MovieState {
   trendingMovies: MovieResponse[];
   searchResults: MovieResponse[];
   favourites: FavouriteMovie[];
-  reviews: [];
 }
 
 const initialState: MovieState = {
   trendingMovies: [],
   searchResults: [],
   favourites: [],
-  reviews: [],
 };
 
 const fetchMoviesSlice = createSlice({
@@ -234,13 +222,9 @@ const fetchMoviesSlice = createSlice({
         state.favourites = [];
       })
       .addCase(deleteToFavouritesThunk.fulfilled, (state, { payload }) => {
-        state.favourites = state.favourites.filter((el) => el.id !== payload);
-      })
-      .addCase(fetchReviewsThunk.fulfilled, (state, { payload }) => {
-        // state.reviews = payload;
-      })
-      .addCase(fetchReviewsThunk.rejected, (state) => {
-        state.reviews = [];
+        state.favourites = state.favourites.filter(
+          (favourite) => favourite.id !== payload
+        );
       });
   },
 });
@@ -251,40 +235,24 @@ const selectMoviesState = (state: RootState) => {
 
 export const selectTrendingMovies = createSelector(
   [selectMoviesState],
-  (state) => {
-    return state.trendingMovies;
+  ({ trendingMovies }) => {
+    return trendingMovies;
   }
 );
 
 export const selectSearchResults = createSelector(
   [selectMoviesState],
-  (state) => {
-    return state.searchResults;
+  ({ searchResults }) => {
+    return searchResults;
   }
 );
 
 export const selectFavoriteMovies = createSelector(
   [selectMoviesState],
-  (state) => {
-    return state.favourites;
+  ({ favourites }) => {
+    return favourites;
   }
 );
-
-export const selectReviewsList = createSelector(
-  [selectMoviesState],
-  (state) => {
-    return state.reviews;
-  }
-);
-
-export const selectReview = (id: number) => {
-  return createSelector([selectMoviesState], (state: any) => {
-    const review = state.reviews.list.find((el: any) => {
-      return Number(el.id) === Number(id);
-    });
-    if (review !== undefined) return review || [];
-  });
-};
 
 export const selectIsFavourite = (id: number) => {
   return createSelector([selectMoviesState], (state: MovieState) => {
