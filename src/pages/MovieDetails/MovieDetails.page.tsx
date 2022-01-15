@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Rating, TextareaAutosize } from "@mui/material";
+import { Rating, TextareaAutosize, Typography } from "@mui/material";
 import { Params, useParams } from "react-router";
 
 import { selectUser } from "redux/slices/authSlice";
 import { getMovieByIdThunk, MovieResponse } from "redux/slices/movieSlice";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 
-import { Button, Movie } from "components";
-import { Page } from "layout/Page/Page";
-import "./MovieDetails.css";
 import {
-  addChangeReviewThunk,
+  addChangeReviewIfNoneThunk,
+  addChangeReviewIfSomeThunk,
   fetchReviewsThunk,
   selectReview,
   selectReviewsList,
 } from "redux/slices/reviewSlice";
+import {
+  addCommentIfNoneThunk,
+  addCommentThunk,
+  CommentResponse,
+  CommentStartingState,
+  fetchCommentsThunk,
+  selectCommentsList,
+} from "redux/slices/commentsSlice";
+
+import { Button, Movie } from "components";
+import { Page } from "layout/Page/Page";
+import "./MovieDetails.css";
 
 const textareaStyles = {
   height: 200,
@@ -31,14 +41,9 @@ export const MovieDetails: React.FC = () => {
   const [movie, setMovie] = useState<MovieResponse | null>(null);
   const movieReview = useAppSelector(selectReview(Number(params.id)));
   const reviewList = useAppSelector(selectReviewsList);
+  const movieComments = useAppSelector(selectCommentsList(Number(params.id)));
   const user = useAppSelector(selectUser);
-  // const reviews = useAppSelector(selectReviewsList);
-  const [comment, setComment] = useState("");
-  // const getRating = (): number => {
-  //   if (reviewState !== undefined && reviewState.vote_average)
-  //     return reviewState.vote_average;
-  //   return movie.vote_average;
-  // };
+  const [comment, setComment] = useState<string>("");
 
   useEffect(() => {
     async function getMovieById() {
@@ -46,37 +51,77 @@ export const MovieDetails: React.FC = () => {
       setMovie(movie.payload as MovieResponse);
     }
     dispatch(fetchReviewsThunk());
+    dispatch(fetchCommentsThunk());
     getMovieById();
   }, []);
 
-  // const addComment = async () => {
-  //   if (!comment) return;
-  //   const data = {
-  //     email: user?.email,
-  //     comment: comment,
-  //   };
-  //   await dispatch(
-  //     addCommentThunk({ review: { ...data, id: movie.id }, currMovie: movie })
-  //   );
-  //   console.log({ review: { ...data, id: movie.id }, currMovie: movie });
-  // };
-
-  const addChangeRating = async (vote_average: number | null) => {
-    if (vote_average === null) return;
-    const movieHasReview = !!reviewList.find(
-      ({ external_movie_id }) => external_movie_id === movie?.external_id
-    );
-
+  const addCommentIfNone = (
+    comment: string,
+    email: string | null | undefined
+  ) => {
+    if (user === null) return;
+    const newCommentSection: CommentStartingState = {
+      external_movie_id: Number(params.id),
+      comments: [{ email: email, comment: comment }],
+    };
     dispatch(
-      addChangeReviewThunk({
+      addCommentIfNoneThunk({
+        newCommentSectionData: newCommentSection,
+      })
+    );
+    setComment("");
+  };
+
+  const addCommentIfSome = (
+    comment: string,
+    email: string | null | undefined,
+    movieComments: CommentResponse
+  ) => {
+    dispatch(addCommentThunk({ comment: { email, comment }, movieComments }));
+    setComment("");
+  };
+
+  const addComment = (comment: string) => {
+    if (comment === "") return;
+    if (movieComments !== undefined && user !== undefined)
+      addCommentIfSome(comment, user?.email, movieComments);
+    else addCommentIfNone(comment, user?.email);
+  };
+
+  const changeCurrentRating = (vote_average: number) => {
+    const rating = vote_average * 2;
+    const newRating: number = (rating + movie?.vote_average!) / 2;
+    dispatch(
+      addChangeReviewIfSomeThunk({
+        review: {
+          ...movieReview!,
+          external_movie_id: movie?.external_id!,
+          vote_average: newRating,
+        },
+      })
+    );
+  };
+
+  const addRating = (vote_average: number) => {
+    dispatch(
+      addChangeReviewIfNoneThunk({
         review: {
           ...movieReview!,
           external_movie_id: movie?.external_id!,
           vote_average: (vote_average * 2 + movie?.vote_average!) / 2,
         },
-        movieHasReview: movieHasReview,
       })
     );
+  };
+
+  const changeRating = (vote_average: number) => {
+    const movieHasReview = !!reviewList.find(({ external_movie_id }) => {
+      console.log(external_movie_id === movie?.external_id);
+      return external_movie_id === movie?.external_id;
+    });
+
+    if (movieHasReview) changeCurrentRating(vote_average);
+    else addRating(vote_average);
   };
 
   return (
@@ -103,7 +148,7 @@ export const MovieDetails: React.FC = () => {
                 movie?.vote_average!) / 2
             }
             onChange={(_, newValue: number | null) => {
-              addChangeRating(newValue);
+              if (newValue !== null) changeRating(newValue);
             }}
           />
           <TextareaAutosize
@@ -112,20 +157,19 @@ export const MovieDetails: React.FC = () => {
             onChange={(event) => {
               setComment(event.target.value);
             }}
+            value={comment}
           />
-          {/* <Button onClick={addComment}>Add Comment</Button> */}
-          {/* <div className="comment-section-container">
-          {reviewState && reviewState.coments.length > 0
-            ? reviewState.coments
-                .slice()
-                .map((el: { email: string; comment: string }, i: number) => (
+          <Button onClick={() => addComment(comment)}>Add Comment</Button>
+          <div className="comment-section-container">
+            {movieComments && movieComments.comments.length > 0
+              ? movieComments.comments.map(({ email, comment }, i) => (
                   <div className="comment-container" key={i}>
-                    <p>{el.email}</p>
-                    <p>{el.comment}</p>
+                    <Typography>Email: {email}</Typography>
+                    <Typography>comment: {comment}</Typography>
                   </div>
                 ))
-            : null} 
-         </div>  */}
+              : null}
+          </div>
         </div>
       </div>
     </Page>

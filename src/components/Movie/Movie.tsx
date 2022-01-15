@@ -44,13 +44,15 @@ export const Movie: React.FC<MovieProps> = ({
 
   function addToFavourites(movie: CreateFavouriteMovie) {
     dispatch(addToFavouritesThunk(movie));
-    return navigate("/");
   }
 
   function removeFromFavourites(id?: string) {
     if (!id) return;
     dispatch(deleteToFavouritesThunk(id));
-    navigate("/");
+  }
+
+  function navigateToDetails(id: number) {
+    navigate(`/movie/movie-title/${id}`);
   }
 
   return (
@@ -59,6 +61,7 @@ export const Movie: React.FC<MovieProps> = ({
         height={300}
         width={200}
         src={`https://image.tmdb.org/t/p/w500${poster_path}`}
+        onClick={() => navigateToDetails(external_id)}
       />
       <div className="description-section">
         <h1>

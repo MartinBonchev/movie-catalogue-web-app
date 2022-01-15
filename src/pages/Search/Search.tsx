@@ -19,10 +19,6 @@ export const Search: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  function navigateToDetails(id: number) {
-    navigate(`/movie/movie-title/${id}`);
-  }
-
   useEffect(() => {
     dispatch(fetchTrendingMoviesThunk());
   }, []);
@@ -43,7 +39,6 @@ export const Search: React.FC = () => {
               <div
                 key={`${movie.poster_path}${movie.release_date}${movie.homepage}`}
                 className="movie"
-                onClick={() => navigateToDetails(movie.external_id)}
               >
                 <Movie
                   external_id={movie.external_id}

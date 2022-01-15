@@ -20,11 +20,6 @@ import { database } from "config/firebase.config";
 const favouritesFirebaseCollection = collection(database, "favourites");
 const commentsFirebaseCollection = collection(database, "comments");
 
-interface CommentState {
-  email: string;
-  comment: string;
-}
-
 export interface MovieResponse {
   id?: string;
   external_id: number;
@@ -146,43 +141,6 @@ export const deleteToFavouritesThunk = createAsyncThunk(
   }
 );
 
-// export const fetchCommentsThunk = createAsync
-
-// export const addRatingThunk = createAsyncThunk(
-//   "movie/reviews/add",
-//   async ({ review, currMovie }: any) => {
-//     // const currReview = currMovie.find((el: any) => el.id === review.id);
-//     // if (currReview !== undefined) {
-//     //   await addDoc(reviewsFirebaseCollection, { ...review });
-//     // } else {
-//     //   const reviewDoc = doc(database, "movie-review-info", review.id);
-//     //   const newReview = (review.vote_average + currMovie.vote_average) / 2;
-//     //   const newFields = { vote_average: newReview };
-//     //   await updateDoc(reviewDoc, newFields);
-//     // }
-//   }
-// );
-
-// export const addCommentThunk = createAsyncThunk(
-//   "movie/reviews/add",
-//   async ({ review, currMovie }: any) => {
-//     // const currReview = currMovie.find((el: any) => el.id === review.id);
-//     // console.log(currReview);
-//     // if (currReview !== undefined) {
-//     //   await addDoc(reviewsFirebaseCollection, { ...review });
-//     // } else {
-//     //   const reviewDoc = doc(database, "movie-review-info", review.id);
-//     //   const newFields = {
-//     //     coment: {
-//     //       email: review.email,
-//     //       comment: review.comment,
-//     //     },
-//     //   };
-//     //   await updateDoc(reviewDoc, newFields);
-//     // }
-//   }
-// );
-
 interface MovieState {
   trendingMovies: MovieResponse[];
   searchResults: MovieResponse[];
@@ -220,6 +178,9 @@ const fetchMoviesSlice = createSlice({
       })
       .addCase(fetchFavouritesThunk.rejected, (state) => {
         state.favourites = [];
+      })
+      .addCase(addToFavouritesThunk.fulfilled, (state, { payload }) => {
+        state.favourites.push(payload);
       })
       .addCase(deleteToFavouritesThunk.fulfilled, (state, { payload }) => {
         state.favourites = state.favourites.filter(

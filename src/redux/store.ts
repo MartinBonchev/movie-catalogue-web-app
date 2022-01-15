@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "./slices/authSlice";
+import commentsSlice from "./slices/commentsSlice";
 import movieSlice from "./slices/movieSlice";
 import reviewSlice from "./slices/reviewSlice";
 
@@ -7,7 +8,8 @@ export const store = configureStore({
   reducer: {
     userData: authSlice,
     moviesData: movieSlice,
-    reviewData: reviewSlice,
+    reviewsData: reviewSlice,
+    commentsData: commentsSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

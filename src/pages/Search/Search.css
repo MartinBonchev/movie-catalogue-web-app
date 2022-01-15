@@ -20,11 +20,7 @@
   border: 2px solid transparent;
   padding: 20px;
 }
-.movie:hover {
-  cursor: pointer;
-  border: 2px solid blue;
-  border-radius: 1.5%;
-}
+
 h2 {
   padding-bottom: 20px;
 }

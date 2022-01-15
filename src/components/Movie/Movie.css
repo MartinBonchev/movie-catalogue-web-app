@@ -12,3 +12,7 @@
   align-items: flex-start;
   padding-left: 30px;
 }
+
+img:hover {
+  cursor: pointer;
+}
