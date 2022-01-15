@@ -14,15 +14,26 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { RootState } from "redux/store";
-import { getGenres } from "utils/utils";
 
 const MOVIE_API_KEY = "9ba406ea4c973d65f9dedc0fea8f449f";
 const BASE_URL = "https://api.themoviedb.org/3/trending/movie/";
 
 interface MoviesListState {
   trendingMovies: MovieState[];
+  searchedMovies: MovieState[];
   favourites: FavouriteMovie[];
-  reviews: [];
+  reviews: ReviewState[];
+}
+
+interface CommentState {
+  email: string;
+  comment: string;
+}
+
+interface ReviewState {
+  coments: CommentState[];
+  external_id: string;
+  vote_average: string;
 }
 
 export interface MovieState {
@@ -32,10 +43,11 @@ export interface MovieState {
   overview: string;
   poster_path: string;
   genres: Array<number>;
-  runtime: number;
-  homepage: string;
+  runtime?: number;
+  homepage?: string;
   vote_average: number;
   external_id: number;
+  name?: string;
 }
 
 export interface CreateFavouriteMovie {
@@ -48,6 +60,7 @@ export interface FavouriteMovie extends CreateFavouriteMovie {
 const initialState: MoviesListState = {
   trendingMovies: [],
   favourites: [],
+  searchedMovies: [],
   reviews: [],
 };
 
@@ -55,10 +68,25 @@ const favouritesCollection = collection(database, "favourites");
 const reviewsCollection = collection(database, "movie-review-info");
 
 export const fetchTrendingMovies = createAsyncThunk("movies", async () => {
-  const response: { data: { results: MovieState[] } } = await axios.get(
+  const response = await axios.get(
     `https://api.themoviedb.org/3/trending/movies/day?api_key=${MOVIE_API_KEY}`
   );
-  return response.data.results;
+
+  const trendingMovies: MovieState[] = response.data.results.map((r: any) => {
+    const trendingMovie: MovieState = {
+      external_id: r.id,
+      genres: r.genre_ids,
+      overview: r.overview,
+      poster_path: r.poster_path,
+      release_date: r.release_date,
+      title: r.title || r.name,
+      vote_average: r.vote_average,
+    };
+
+    return trendingMovie;
+  });
+
+  return trendingMovies;
 });
 
 export const fetchFavouritesThunk = createAsyncThunk(
@@ -116,7 +144,7 @@ export const deleteToFavouritesThunk = createAsyncThunk(
 
 export const fetchReviewsThunk = createAsyncThunk("movie/reviews", async () => {
   const response = await getDocs(reviewsCollection);
-  return response.docs.map((doc) => ({ ...doc.data(), review_id: doc.id }));
+  return response.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 });
 
 export const addRatingThunk = createAsyncThunk(
@@ -154,6 +182,30 @@ export const addCommentThunk = createAsyncThunk(
   }
 );
 
+export const searchMoviesThunk = createAsyncThunk(
+  "movie/search",
+  async (query: string) => {
+    const response: { data: { page: number; results: MovieState[] } } =
+      await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=${MOVIE_API_KEY}&query=${query}`
+      );
+
+    const searchedMovies: MovieState[] = response.data.results.map((r: any) => {
+      const searchedMovie: MovieState = {
+        external_id: r.id,
+        genres: r.genre_ids,
+        overview: r.overview,
+        poster_path: r.poster_path,
+        release_date: r.release_date,
+        title: r.title || r.name,
+        vote_average: r.vote_average,
+      };
+      return searchedMovie;
+    });
+
+    return searchedMovies;
+  }
+);
 const fetchMoviesSlice = createSlice({
   name: "movies",
   initialState,
@@ -167,6 +219,7 @@ const fetchMoviesSlice = createSlice({
           });
           return isFavourite ? { ...el, id: isFavourite.id } : el;
         });
+
         state.trendingMovies = getTrendingMovies;
       })
       .addCase(fetchTrendingMovies.rejected, (state) => {
@@ -179,17 +232,17 @@ const fetchMoviesSlice = createSlice({
       .addCase(fetchFavouritesThunk.rejected, (state) => {
         state.favourites = [];
       });
-    builder.addCase(addToFavouritesThunk.fulfilled, (state, action) => {
-      state.favourites.push(action.payload);
-    });
-    builder.addCase(deleteToFavouritesThunk.fulfilled, (state, action) => {
-      state.favourites = state.favourites.filter(
-        (el) => el.id !== action.payload
-      );
-    });
+    builder
+      .addCase(searchMoviesThunk.fulfilled, (state, action) => {
+        state.searchedMovies = action.payload;
+      })
+      .addCase(searchMoviesThunk.rejected, (state) => {
+        state.searchedMovies = [];
+      });
+
     builder
       .addCase(fetchReviewsThunk.fulfilled, (state, action) => {
-        // state.reviews = { list: action.payload };
+        // state.reviews = action.payload;
       })
       .addCase(fetchReviewsThunk.rejected, (state) => {
         state.reviews = [];
@@ -202,7 +255,9 @@ const selectMovies = (state: RootState) => {
 };
 
 export const selectMoviesList = createSelector([selectMovies], (state) => {
-  return state.trendingMovies;
+  return state.searchedMovies.length > 0
+    ? state.searchedMovies
+    : state.trendingMovies;
 });
 
 export const selectFavouritesList = createSelector([selectMovies], (state) => {

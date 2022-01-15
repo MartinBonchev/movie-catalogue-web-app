@@ -21,4 +21,4 @@ const genres: Record<number, string> = {
 };
 
 export const getGenres = (genreIds: number[]) =>
-  genreIds.map((id) => genres[id]);
+  genreIds.filter((id) => genres[id] !== undefined).map((id) => genres[id]);

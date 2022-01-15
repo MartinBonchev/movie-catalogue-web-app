@@ -19,7 +19,7 @@ interface MovieProps {
   genres: Array<number>;
   runtime?: number;
   overview: string;
-  homepage: string;
+  homepage?: string;
   external_id: number;
   poster_path: string;
   release_date: string;
@@ -45,12 +45,6 @@ export const Movie: React.FC<MovieProps> = ({
   const dispatch = useAppDispatch();
   const favourites = useAppSelector(selectFavouritesList);
 
-  function checkFavourites(id: number) {
-    return favourites.find((el: CreateFavouriteMovie) => {
-      return Number(el.external_id) === id;
-    });
-  }
-
   function addToFavourites(movie: CreateFavouriteMovie) {
     dispatch(addToFavouritesThunk(movie));
     return navigate("/");
@@ -71,14 +65,14 @@ export const Movie: React.FC<MovieProps> = ({
       />
       <div className="description-section">
         <h1>
-          {title} ({getYear(release_date)})
+          {title} {release_date ? `(${getYear(release_date)})` : null}
         </h1>
         <p>
-          {/* {getGenres(genres).join(", ")}{" "} */}
+          {getGenres(genres).join(", ")}
           {runtime ? `| ${runtime}  minutes` : null}
         </p>
         <p>{overview}</p>
-        <a href={homepage}>Visit official site</a>
+        {homepage && <a href={homepage}>Visit official site</a>}
         {!isFavourite ? (
           <Button
             onClickHandler={() =>

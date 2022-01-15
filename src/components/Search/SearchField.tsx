@@ -3,12 +3,16 @@ import React from "react";
 
 interface SearchFieldProps {
   styles?: React.CSSProperties | undefined;
-  getValue: (value: string) => void;
+  onChangeHandler: (
+    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => void;
+  value: string;
 }
 
 export const SearchField: React.FC<SearchFieldProps> = ({
   styles,
-  getValue,
+  onChangeHandler,
+  value,
 }) => {
   const defaultStyles = { width: 300, backgroundColor: "white" };
 
@@ -20,9 +24,8 @@ export const SearchField: React.FC<SearchFieldProps> = ({
       style={{ ...defaultStyles, ...styles }}
       label="Search by movie title..."
       variant="outlined"
-      onChange={(value) => {
-        getValue(value.target.value);
-      }}
+      onChange={onChangeHandler}
+      value={value || ""}
     ></TextField>
   );
 };

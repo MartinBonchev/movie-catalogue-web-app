@@ -7,7 +7,7 @@ import { Button } from "components";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import { logoutUserThunk } from "redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import { searchByTitle } from "config/search";
+
 import { selectMoviesList } from "redux/slices/movieSlice";
 
 interface HeaderProps {}
@@ -15,7 +15,7 @@ interface HeaderProps {}
 const Header: FunctionComponent<HeaderProps> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const moviesState = useAppSelector(selectMoviesList) || [];
+  const moviesState = useAppSelector(selectMoviesList);
   async function logout() {
     try {
       const res: any = await dispatch(logoutUserThunk());
@@ -28,18 +28,10 @@ const Header: FunctionComponent<HeaderProps> = () => {
     }
   }
 
-  function getMovieList(value: string) {
-    console.log(searchByTitle(value, moviesState));
-    if (searchByTitle(value, moviesState))
-      return searchByTitle(value, moviesState);
-
-    return moviesState;
-  }
-
   return (
     <div className="header-container">
       <Typography>My Movie Collection</Typography>
-      <SearchContainer getValue={getMovieList} />
+      <SearchContainer />
       <Button color="primary" onClickHandler={logout}>
         Log out
       </Button>
