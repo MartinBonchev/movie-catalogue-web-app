@@ -1,7 +1,16 @@
-import { createTheme, ThemeOptions } from "@mui/material";
-import { green, red } from "@mui/material/colors";
-import { dark } from "@mui/material/styles/createPalette";
-import { Interface } from "readline";
+import { createTheme } from "@mui/material";
+declare module '@mui/material/styles' {
+  interface Theme {
+    // status: {
+    //   danger: string;
+    // };
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    // status?: {
+    //   danger?: string;
+    // };
+  }
+}
 
-const ThemeOptions = require("@mui/material/styles") as Interface;
-export const theme: ThemeOptions = createTheme();
+export const theme = createTheme({});

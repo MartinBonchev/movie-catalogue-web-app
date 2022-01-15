@@ -1,10 +1,17 @@
-import { FormControl, Input, InputLabel, Typography } from "@mui/material";
-import "./Auth.css";
-import { Button, Container } from "components";
 import React, { useState } from "react";
-import { useAppDispatch } from "__hooks__/redux";
-import { createUserThunk, loginUserThunk } from "../../redux/slices/authSlice";
-import { auth } from "firebase.config";
+import { FormControl, Input, InputLabel, Typography } from "@mui/material";
+
+import { Button, Container } from "components";
+import { useAppDispatch, useAppSelector } from "__hooks__/redux";
+import {
+  createUserThunk,
+  loginUserThunk,
+  selectIsAuthenticated,
+} from "redux/slices/authSlice";
+
+import "./Auth.css";
+import { Navigate } from "react-router";
+
 interface AuthProps {}
 
 interface FieldData {
@@ -32,6 +39,8 @@ const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
 export const Auth: React.FC<AuthProps> = ({}) => {
   const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
   const [mode, setMode] = useState("login");
   const [error, setError] = useState("");
   const [userData, setUserData] = useState({
@@ -145,6 +154,10 @@ export const Auth: React.FC<AuthProps> = ({}) => {
   function authenticate(userData: FieldData) {
     if (isRegisterMode()) signup(userData);
     else signin(userData);
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
   }
 
   return (

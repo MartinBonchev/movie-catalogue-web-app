@@ -6,8 +6,8 @@ import {
   deleteToFavouritesThunk,
   CreateFavouriteMovie,
   fetchReviewsThunk,
-  MovieState,
-  selectFavouritesList,
+  MovieResponse,
+  selectFavoriteMovies,
   selectIsFavourite,
 } from "redux/slices/movieSlice";
 import { getGenres } from "utils/utils";
@@ -43,14 +43,13 @@ export const Movie: React.FC<MovieProps> = ({
   };
   const isFavourite = useAppSelector(selectIsFavourite(external_id));
   const dispatch = useAppDispatch();
-  const favourites = useAppSelector(selectFavouritesList);
 
   function addToFavourites(movie: CreateFavouriteMovie) {
     dispatch(addToFavouritesThunk(movie));
     return navigate("/");
   }
 
-  function removeFromFavourites(id: string | undefined) {
+  function removeFromFavourites(id?: string) {
     if (!id) return;
     dispatch(deleteToFavouritesThunk(id));
     navigate("/");

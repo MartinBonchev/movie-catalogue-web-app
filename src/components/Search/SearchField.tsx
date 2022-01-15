@@ -1,6 +1,5 @@
-import { TextField } from "@mui/material";
 import React from "react";
-
+import { TextField } from "@mui/material";
 interface SearchFieldProps {
   styles?: React.CSSProperties | undefined;
   onChangeHandler: (
@@ -15,7 +14,6 @@ export const SearchField: React.FC<SearchFieldProps> = ({
   value,
 }) => {
   const defaultStyles = { width: 300, backgroundColor: "white" };
-
   return (
     <TextField
       color="success"

@@ -1,5 +1,6 @@
 import { Rating, TextareaAutosize } from "@mui/material";
 import { Button, Movie } from "components";
+import { Page } from "layout/Page/Page";
 import React, { useEffect, useState } from "react";
 import { Params, useParams } from "react-router";
 import { selectUser } from "redux/slices/authSlice";
@@ -7,8 +8,7 @@ import {
   addCommentThunk,
   addRatingThunk,
   getMovieByIdThunk,
-  MovieState,
-  selectMovie,
+  MovieResponse,
   selectReview,
   selectReviewsList,
 } from "redux/slices/movieSlice";
@@ -28,7 +28,7 @@ const textareaStyles = {
 export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
   const params: Readonly<Params<string>> = useParams();
   const dispatch = useAppDispatch();
-  const [movie, setMovie] = useState<MovieState | null>(null);
+  const [movie, setMovie] = useState<MovieResponse | null>(null);
   // const reviewState = useAppSelector(selectReview(movie.id));
   const user = useAppSelector(selectUser);
   // const reviews = useAppSelector(selectReviewsList);
@@ -43,7 +43,7 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
   useEffect(() => {
     async function getMovieById() {
       const movie = await dispatch(getMovieByIdThunk(Number(params.id)));
-      setMovie(movie.payload as MovieState);
+      setMovie(movie.payload as MovieResponse);
     }
     getMovieById();
   }, []);
@@ -71,7 +71,8 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
   // };
 
   return (
-    <div className="movie-details-container">
+    <Page>
+      <div className="movie-details-container">
       {movie && (
         <Movie
           external_id={movie.external_id}
@@ -115,5 +116,6 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({}) => {
         </div> */}
       </div>
     </div>
+    </Page>
   );
 };

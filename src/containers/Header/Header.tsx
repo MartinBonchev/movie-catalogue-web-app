@@ -1,21 +1,19 @@
-import { FunctionComponent } from "react";
 import React from "react";
-import { Typography } from "@mui/material";
-import "./Header.css";
-import { SearchContainer } from "containers";
-import { Button } from "components";
-import { useAppDispatch, useAppSelector } from "__hooks__/redux";
-import { logoutUserThunk } from "redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 
-import { selectMoviesList } from "redux/slices/movieSlice";
+import { Typography } from "@mui/material";
+import "./Header.css";
+import { Button } from "components";
+import {SearchContainer} from 'containers'
+import { useAppDispatch } from "__hooks__/redux";
+import { logoutUserThunk } from "redux/slices/authSlice";
+
 
 interface HeaderProps {}
 
-const Header: FunctionComponent<HeaderProps> = () => {
+const Header: React.FC<HeaderProps> = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const moviesState = useAppSelector(selectMoviesList);
   async function logout() {
     try {
       const res: any = await dispatch(logoutUserThunk());

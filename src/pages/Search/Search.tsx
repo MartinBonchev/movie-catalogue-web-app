@@ -1,39 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { Movie } from "components";
-import "./Search.css";
-import {
-  fetchTrendingMovies,
-  MovieState,
-  selectMoviesList,
-} from "redux/slices/movieSlice";
-import { useAppDispatch, useAppSelector } from "__hooks__/redux";
-
+import React, {useEffect} from "react";
 import { useNavigate } from "react-router";
-import { SearchContainer } from "containers";
 
-export const Search: React.FC = ({}) => {
-  const moviesState = useAppSelector(selectMoviesList);
+import {Page} from 'layout/Page/Page'
+import { useAppDispatch, useAppSelector } from "__hooks__/redux";
+import { Movie } from "components";
+import { SearchContainer } from "containers";
+import {
+  fetchTrendingMoviesThunk,
+  selectSearchResults,
+  selectTrendingMovies,
+} from "redux/slices/movieSlice";
+
+import "./Search.css";
+
+export const Search: React.FC = () => {
+  const trendingMovies = useAppSelector(selectTrendingMovies);
+  const searchResults = useAppSelector(selectSearchResults);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   function navigateToDetails(id: number) {
     navigate(`/movie/movie-title/${id}`);
   }
 
   useEffect(() => {
-    dispatch(fetchTrendingMovies());
+    dispatch(fetchTrendingMoviesThunk());
   }, []);
+
+  const moviesToRender = searchResults.length > 0 ? searchResults: trendingMovies;
+
   return (
-    <div className="container">
+    <Page>
+      <div className="container">
       <div className="section-container">
         <div className="search-heading-container">
           <h2>Search</h2>
           <SearchContainer />
         </div>
         <div className="movie-section-container">
-          {moviesState &&
-            moviesState.map((movie: MovieState) => (
+          {moviesToRender.map((movie) => (
               <div
-                key={movie.external_id}
+                key={`${movie.poster_path}${movie.release_date}${movie.homepage}`}
                 className="movie"
                 onClick={() => navigateToDetails(movie.external_id)}
               >
@@ -50,5 +57,6 @@ export const Search: React.FC = ({}) => {
         </div>
       </div>
     </div>
+    </Page>
   );
 };

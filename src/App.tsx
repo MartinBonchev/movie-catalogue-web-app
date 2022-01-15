@@ -1,40 +1,36 @@
-import { Header } from "containers";
-import { ProtectedRoute } from "pages/Authentication/ProtectedRoute";
-import { Auth } from "pages/Authentication/Auth";
-import { Home } from "pages/Home/Home";
-import React, { useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
-import {
-  // loginWithTokenThunk,
-  selectIsAuthenticated,
-} from "redux/slices/authSlice";
-import { useAppDispatch, useAppSelector } from "__hooks__/redux";
+import React, { useState } from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { CssBaseline } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
+
+import Routes from "Routes";
+import { useAppDispatch } from "__hooks__/redux";
+import { setUser } from "redux/slices/authSlice";
+import { theme } from "styles/theme";
+import { auth } from "firebase.config";
+
 import "./App.css";
-import { Search } from "./pages/Search/Search";
-import { MovieDetails } from "pages/MovieDetails/MovieDetails";
 
 function App() {
-  const isAuth = useAppSelector(selectIsAuthenticated);
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   dispatch(loginWithTokenThunk());
-  // }, []);
+  const dispatch = useAppDispatch();
+  const [firebaseAuthTrigger, setFirebaseAuthTrigger] = useState(false)
+  
+  auth.onAuthStateChanged((userCredentials) => {
+    setFirebaseAuthTrigger(true)
+    if (userCredentials) {
+      dispatch(
+        setUser({ email: userCredentials.email, user_id: userCredentials.uid })
+      );
+    }
+  });
+
   return (
-    <div>
-      {isAuth ? <Header /> : null}
-      <Routes>
-        {!isAuth ? (
-          <Route path="auth" element={<Auth />} />
-        ) : (
-          <>
-            <Route path="/*" element={<Home />} />
-            <Route path="search" element={<Search />} />
-            <Route path="movie/movie-title/:id" element={<MovieDetails />} />
-          </>
-        )}
-        <Route path="*" element={<Navigate to={isAuth ? "/" : "/auth"} />} />
-      </Routes>
-    </div>
+    <Router>
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        {firebaseAuthTrigger ? <Routes /> : null}
+      </ThemeProvider>
+    </Router>
   );
 }
 
