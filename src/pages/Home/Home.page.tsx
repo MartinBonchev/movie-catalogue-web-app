@@ -52,7 +52,7 @@ export const Home: React.FC<HomeProps> = ({}) => {
             {favourites.map(({ external_id, poster_path }) => (
               <div
                 onClick={() => navigateToMovieDetails(external_id)}
-                className="favourite-movie-container"
+                className="favourtie-movie-container"
                 key={external_id}
               >
                 <img

@@ -10,9 +10,11 @@
 }
 
 .favourite-section-container {
-  padding: 50px;
+  margin: 50px;
+
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
@@ -40,19 +42,19 @@
   flex-direction: column;
 }
 
-.favourite-movie-container {
-  padding: 20px;
-  width: 200px;
-}
-
 .favourites-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
 }
-.favourite-movie-container:hover {
+.favourtie-movie-container:hover {
   cursor: pointer;
-  border: 2px solid blue;
-  border-radius: 1.5%;
+  border: 5px solid hsl(128, 82%, 74%);
+  border-radius: 20px;
+}
+
+.favourtie-movie-container {
+  padding: 20px;
+  border: 5px solid transparent;
 }
