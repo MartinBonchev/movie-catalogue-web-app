@@ -115,10 +115,9 @@ export const MovieDetails: React.FC = () => {
   };
 
   const changeRating = (vote_average: number) => {
-    const movieHasReview = !!reviewList.find(({ external_movie_id }) => {
-      console.log(external_movie_id === movie?.external_id);
-      return external_movie_id === movie?.external_id;
-    });
+    const movieHasReview = !!reviewList.find(
+      ({ external_movie_id }) => external_movie_id === movie?.external_id
+    );
 
     if (movieHasReview) changeCurrentRating(vote_average);
     else addRating(vote_average);

@@ -9,15 +9,13 @@ import { createUserThunk } from "redux/slices/authSlice";
 
 import { Button } from "components";
 import "./SignUp.css";
+import { passwordPattern } from "utils/passwordPattern.utils";
 
 interface FormState {
   email: string;
   password: string;
   confirmPassword?: string;
 }
-
-const passwordPattern =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]/;
 
 const formSchema = yup.object().shape({
   email: yup.string().email().required("This field is required!"),

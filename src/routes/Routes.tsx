@@ -7,7 +7,7 @@ import { Search } from "pages/Search/Search";
 import { MovieDetails } from "pages/MovieDetails/MovieDetails.page";
 
 import { Auth } from "pages/Authentication/Auth/Auth";
-import { SignUp } from "pages/Authentication/SIgnUp/SignUp.page";
+import { SignUp } from "pages/Authentication/SignUp/SignUp.page";
 import { SignIn } from "pages/Authentication/SignIn/SignIn";
 
 export const AppRoutes: React.FC = () => {

@@ -69,7 +69,7 @@ export const Movie: React.FC<MovieProps> = ({
         </h1>
         <p>
           {getGenres(genres).join(", ")}
-          {runtime ? `| ${runtime}  minutes` : null}
+          {runtime ? ` | ${runtime}  minutes` : null}
         </p>
         <p>{overview}</p>
         {homepage && <a href={homepage}>Visit official site</a>}

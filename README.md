@@ -1,46 +1,57 @@
-# Getting Started with Create React App
+# Movie catalogue WEBAPP
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Movie catalogue WEBAPP gives you the opportunity to browse through every movie available nowadays. You can look through the movie rating, description and leave comments or rating.
 
-## Available Scripts
+## Run Locally
 
-In the project directory, you can run:
+Clone the project
 
-### `yarn start`
+```bash
+  git clone git@github.com:MartinBonchev/movie-catalogue-web-app.git
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Go to the project directory
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+  cd movie-catalogue-web-app
+```
 
-### `yarn test`
+Create .env.local and set up your env variables (for example you can see in the root directory the .env.example file).
+To set up the env variables, you need to create a firebase project on
+https://console.firebase.google.com/u/0/, click on "Project Overview" click on
+</> symbol to create a new web app. Choose a name, register you app and there you can get you env variables.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Install dependencies
 
-### `yarn build`
+```bash
+  yarn install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# replace `yarn` with `npm` if it works better for you
+cd hello-world && yarn
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Start the server
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+  yarn start
+```
 
-### `yarn eject`
+Your server will be open on http://localhost:3000
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## How you can use it
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. You can start with creating or logging into your account by choosing with the button on the top left.
+   Enter your details and Submit your information. Don't forget to fulfil the requirements.
+   ![](https://i.postimg.cc/C1VrjXH9/Screenshot-2022-01-17-at-19-42-26.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. Then you can see your "Favourite Movies" or "Search" for your favourite movies.
+   ![](https://i.postimg.cc/Mpqymwh7/Screenshot-2022-01-17-at-19-53-41.png)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+3. By clicking on the "Search" button you will go a list with the trendiest movies nowadays.
+   There you can search through all the movies available.
+   ![](https://i.postimg.cc/JnZnFDXG/Screenshot-2022-01-17-at-19-55-54.png)
 
-## Learn More
+4. There you can add or remove from favourites and when you click the movie image you will see the movie's description, rating, comments. Of course you can add comments and add rating to the movie.
+   ![](https://i.postimg.cc/TwCSfQgS/Screenshot-2022-01-17-at-20-00-28.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+5. Of course you can go back to the home page by clicking on title on the top left ↖️

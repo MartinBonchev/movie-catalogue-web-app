@@ -7,12 +7,13 @@ import {
   selectTrendingMovies,
 } from "redux/slices/movieSlice";
 
+import { useAppDispatch, useAppSelector } from "__hooks__/redux";
+import { selectUser } from "redux/slices/authSlice";
+
 import { SearchContainer } from "containers";
 import { Movie } from "components";
 import { Page } from "containers/Page/Page";
-import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Search.css";
-import { selectUser } from "redux/slices/authSlice";
 
 export const Search: React.FC = () => {
   const trendingMovies = useAppSelector(selectTrendingMovies);
