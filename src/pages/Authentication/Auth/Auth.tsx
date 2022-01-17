@@ -17,6 +17,7 @@ export const Auth: React.FC = () => {
   return (
     <div className="auth-container">
       <div className="auth-nav-container">
+        <p>Go to </p>
         {location.pathname === "/auth/signin" ? (
           <Link to="/auth/signup" style={{ textDecoration: "none" }}>
             <Button variant="contained">Sign Up</Button>
