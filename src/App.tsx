@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
 
-import Routes from "Routes";
+import Routes from "routes/Routes";
 import { auth } from "config/firebase.config";
 import { useAppDispatch } from "__hooks__/redux";
 import { setUser } from "redux/slices/authSlice";

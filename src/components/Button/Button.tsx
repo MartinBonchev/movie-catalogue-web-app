@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <MaterialButton
-      style={{ textTransform: "none", ...style }}
+      style={{ textTransform: "none", ...style, textDecoration: "none" }}
       className="search-button"
       size="medium"
       onClick={onClick}

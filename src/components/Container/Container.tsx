@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 
 interface ContainerProps {
   style?: React.CSSProperties | undefined;
-  children: JSX.Element[];
+  children: JSX.Element;
 }
 
 export const Container: React.FC<ContainerProps> = ({ style, children }) => {
