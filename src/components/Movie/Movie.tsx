@@ -75,6 +75,7 @@ export const Movie: React.FC<MovieProps> = ({
         {homepage && <a href={homepage}>Visit official site</a>}
         {!isFavourite ? (
           <Button
+            color="success"
             onClick={() =>
               addToFavourites({
                 external_id: external_id,

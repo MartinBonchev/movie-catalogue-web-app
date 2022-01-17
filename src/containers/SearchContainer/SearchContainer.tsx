@@ -28,7 +28,9 @@ export const SearchContainer: React.FC<SearchContainerProps> = ({}) => {
   return (
     <div className="search-container">
       <SearchField onChange={handlerOnChange} value={query} />
-      <Button onClick={() => searchAction(query)}>Search</Button>
+      <Button color="success" onClick={() => searchAction(query)}>
+        Search
+      </Button>
     </div>
   );
 };
