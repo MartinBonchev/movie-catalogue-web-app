@@ -6,10 +6,14 @@ import * as yup from "yup";
 
 import { loginUserThunk } from "redux/slices/authSlice";
 import { useAppDispatch } from "__hooks__/redux";
-import { Button } from "components";
 
-const passwordPattern =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]/;
+import { Button } from "components";
+import { passwordPattern } from "utils/passwordPattern.utils";
+
+interface FormState {
+  email: string;
+  password: string;
+}
 
 const formSchema = yup.object().shape({
   email: yup.string().email().required("This field is required!"),
@@ -23,11 +27,6 @@ const formSchema = yup.object().shape({
     )
     .required("This field is required!"),
 });
-
-interface FormState {
-  email: string;
-  password: string;
-}
 
 export const SignIn: React.FC = () => {
   const {
@@ -72,7 +71,6 @@ export const SignIn: React.FC = () => {
             />
           )}
         />
-
         <Controller
           name="password"
           control={control}
@@ -88,7 +86,6 @@ export const SignIn: React.FC = () => {
             />
           )}
         />
-
         <Button className="submit-button" type="submit">
           Submit
         </Button>

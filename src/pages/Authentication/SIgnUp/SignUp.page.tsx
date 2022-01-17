@@ -14,7 +14,7 @@ import { passwordPattern } from "utils/passwordPattern.utils";
 interface FormState {
   email: string;
   password: string;
-  confirmPassword?: string;
+  confirmPassword: string;
 }
 
 const formSchema = yup.object().shape({
@@ -44,13 +44,10 @@ export const SignUp: React.FC = () => {
   const dispatch = useAppDispatch();
   const [error, setError] = useState("");
 
-  const authenticate: SubmitHandler<FormState> = async ({
-    email,
-    password,
-  }: FormState) => {
+  const authenticate: SubmitHandler<FormState> = async (data: FormState) => {
     try {
       const res: any = await dispatch(
-        createUserThunk({ email: email, password: password })
+        createUserThunk({ email: data.email, password: data.password })
       );
       if (res.error) setError(res.error.message);
     } catch (error) {
@@ -77,7 +74,6 @@ export const SignUp: React.FC = () => {
             />
           )}
         />
-
         <Controller
           name="password"
           control={control}
@@ -93,7 +89,6 @@ export const SignUp: React.FC = () => {
             />
           )}
         />
-
         <Controller
           name="confirmPassword"
           control={control}
@@ -111,7 +106,6 @@ export const SignUp: React.FC = () => {
             />
           )}
         />
-
         <Button className="submit-button" type="submit">
           Submit
         </Button>
