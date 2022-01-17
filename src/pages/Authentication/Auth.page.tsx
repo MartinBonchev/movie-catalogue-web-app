@@ -12,8 +12,6 @@ import {
 
 import "./Auth.css";
 
-interface AuthProps {}
-
 interface FieldData {
   email: string;
   password: string;
@@ -37,7 +35,7 @@ type FormKeys = "email" | "password" | "passwordCheck";
 const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-export const Auth: React.FC<AuthProps> = ({}) => {
+export const Auth: React.FC = () => {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
@@ -87,7 +85,7 @@ export const Auth: React.FC<AuthProps> = ({}) => {
     }
   }
 
-  function checkFormValidity(obj: FormValidity) {
+  function checkFormValidity(obj: FormValidity): boolean {
     return checkValues(obj, (e: boolean) => e === true);
   }
 

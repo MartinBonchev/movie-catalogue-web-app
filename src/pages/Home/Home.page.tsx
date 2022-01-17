@@ -1,11 +1,11 @@
 import { Button } from "components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchFavouritesThunk,
   selectFavoriteMovies,
 } from "redux/slices/movieSlice";
-import { Page } from "layout/Page/Page";
+import { Page } from "containers/Page/Page";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Home.css";
 import { selectUser } from "redux/slices/authSlice";

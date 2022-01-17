@@ -1,24 +1,33 @@
 import React from "react";
+import { useNavigate } from "react-router";
 import { Typography } from "@mui/material";
 
 import { useAppDispatch } from "__hooks__/redux";
 import { logoutUserThunk } from "redux/slices/authSlice";
+import { clearFavourites } from "redux/slices/movieSlice";
+
 import { Button } from "components";
 import { SearchContainer } from "containers";
 import "./Header.css";
-import { clearFavourites } from "redux/slices/movieSlice";
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  async function logout() {
+  function logout() {
     dispatch(logoutUserThunk());
     dispatch(clearFavourites());
   }
 
+  const navigateToHome = () => {
+    navigate("/");
+  };
+
   return (
     <div className="header-container">
-      <Typography>My Movie Collection</Typography>
+      <div className="title-container" onClick={navigateToHome}>
+        <Typography>My Movie Collection</Typography>
+      </div>
       <SearchContainer />
       <Button color="primary" onClick={logout}>
         Log out

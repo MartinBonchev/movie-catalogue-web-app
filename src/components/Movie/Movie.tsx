@@ -1,19 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import {
   addToFavouritesThunk,
   deleteToFavouritesThunk,
   CreateFavouriteMovie,
   selectIsFavourite,
 } from "redux/slices/movieSlice";
+import { selectUser } from "redux/slices/authSlice";
 
+import { extractYearFrom } from "utils/date.utils";
 import { Button } from "components";
 import { getGenres } from "utils/genre.utils";
-import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Movie.css";
-import { extractYearFrom } from "utils/date.utils";
-import { selectUser } from "redux/slices/authSlice";
 
 interface MovieProps {
   id?: string;
@@ -39,11 +39,9 @@ export const Movie: React.FC<MovieProps> = ({
   release_date,
 }) => {
   const navigate = useNavigate();
-
   const isFavourite = useAppSelector(selectIsFavourite(external_id));
   const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
-
   function addToFavourites(movie: CreateFavouriteMovie) {
     dispatch(addToFavouritesThunk(movie));
   }

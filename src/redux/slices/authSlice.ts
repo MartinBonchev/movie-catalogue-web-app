@@ -4,7 +4,7 @@ import {
   createSelector,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { RootState, store } from "redux/store";
+import { RootState } from "redux/store";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -105,6 +105,7 @@ export const { setUser } = authSlice.actions;
 const selectAuthState = (state: RootState) => {
   return state.userData;
 };
+
 export const selectIsAuthenticated = createSelector(
   [selectAuthState],
   (state) => {

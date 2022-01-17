@@ -23,7 +23,7 @@ import {
 } from "redux/slices/commentsSlice";
 
 import { Button, Movie } from "components";
-import { Page } from "layout/Page/Page";
+import { Page } from "containers/Page/Page";
 import "./MovieDetails.css";
 
 const textareaStyles = {

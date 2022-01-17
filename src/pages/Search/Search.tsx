@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router";
 
 import {
+  fetchFavouritesThunk,
   fetchTrendingMoviesThunk,
   selectSearchResults,
   selectTrendingMovies,
@@ -9,18 +9,20 @@ import {
 
 import { SearchContainer } from "containers";
 import { Movie } from "components";
-import { Page } from "layout/Page/Page";
+import { Page } from "containers/Page/Page";
 import { useAppDispatch, useAppSelector } from "__hooks__/redux";
 import "./Search.css";
+import { selectUser } from "redux/slices/authSlice";
 
 export const Search: React.FC = () => {
   const trendingMovies = useAppSelector(selectTrendingMovies);
   const searchResults = useAppSelector(selectSearchResults);
+  const user = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchTrendingMoviesThunk());
+    dispatch(fetchFavouritesThunk(user?.user_id));
   }, []);
 
   const moviesToRender =
