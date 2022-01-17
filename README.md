@@ -27,7 +27,7 @@ Install dependencies
   yarn install
 
 # replace `yarn` with `npm` if it works better for you
-cd hello-world && yarn
+
 ```
 
 Start the server
